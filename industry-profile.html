@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Industry Profile – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex; align-items: center;
+      padding: 0 44px; flex-shrink: 0;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .logo { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 32px; color: #000; letter-spacing: -0.5px; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+    .search-wrap { position: relative; width: 260px; }
+    .search-wrap input {
+      width: 100%; padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9; border-radius: 8px;
+      background: #fff; font-family: 'Inter', sans-serif;
+      font-size: 16px; color: #1e1e1e; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus { border-color: #284cb8; box-shadow: 0 0 0 3px rgba(40,76,184,0.10); }
+    .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 17px; color: #666; pointer-events: none; }
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 26px; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; }
+    .icon-btn:hover { background: rgba(0,0,0,0.07); transform: scale(1.1); }
+
+    .layout { display: flex; flex: 1; }
+
+    .sidebar { width: 310px; min-width: 310px; background: #d9d9d9; padding: 16px 0; min-height: calc(100vh - 100px - 54px); }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 20px; font-size: 26px; font-weight: 400; color: #000; text-decoration: none; cursor: pointer; border-left: 3px solid transparent; transition: background 0.15s, border-color 0.15s, padding-left 0.2s; }
+    .nav-item:hover { background: rgba(0,0,0,0.06); padding-left: 28px; }
+    .nav-item.active { color: #284cb8; border-left-color: #284cb8; background: rgba(40,76,184,0.05); }
+    .nav-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+
+    .main {
+      flex: 1;
+      padding: 0 44px 60px 32px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow-y: auto;
+    }
+
+    .page-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 12px;
+      animation: fadeDown 0.4s ease both;
+    }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);} }
+    .page-nav-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 28px; font-weight: 700; color: #000;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .page-nav-btn:hover { background: rgba(0,0,0,0.06); transform: scale(1.12); }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 28px;
+      padding-bottom: 32px;
+      position: relative;
+      animation: cardUp 0.5s 0.05s ease both;
+    }
+    @keyframes cardUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+
+    /* ── LOGO BOX FIX ── */
+    .company-logo-box {
+      width: 160px;
+      height: 160px;
+      border-radius: 14px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid rgba(209,201,186,0.6);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+      transition: transform 0.3s, box-shadow 0.3s;
+      /* ensure inner content is contained */
+      display: flex;
+      align-items: stretch;
+    }
+    .company-logo-box:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(0,0,0,0.16); }
+    .company-logo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ── LOGO FALLBACK: fills the box completely ── */
+    .logo-fallback-box {
+      width: 160px;
+      height: 160px;
+      min-width: 160px;
+      min-height: 160px;
+      background: linear-gradient(135deg, #1a0a3e, #3a1a7e);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 8px;
+      /* prevent any overflow */
+      overflow: hidden;
+    }
+
+    /* SVG icon — sized to fit */
+    .logo-fallback-box svg {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+    }
+
+    /* Text label — constrained inside the box */
+    .logo-fallback-box .lf-text {
+      font-size: 10px;
+      font-weight: 700;
+      color: #c084fc;
+      letter-spacing: 1.5px;
+      text-align: center;
+      white-space: nowrap;
+      /* scale down if still too wide */
+      max-width: 136px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    .company-info { flex: 1; display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
+    .company-name { font-family: 'Inter', sans-serif; font-size: 38px; font-weight: 600; color: #000; line-height: 1.15; }
+    .company-type { font-size: 20px; font-weight: 400; color: #000; }
+
+    .profile-active-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #86e88a;
+      border-radius: 10px;
+      padding: 10px 22px;
+      font-size: 20px; font-weight: 500; color: #000;
+      width: fit-content;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      animation: pulseGlow 2.5s ease-in-out infinite;
+    }
+    .profile-active-badge:hover { background: #5fd464; transform: scale(1.04); }
+    @keyframes pulseGlow {
+      0%,100% { box-shadow: 0 0 0 0 rgba(134,232,138,0.4); }
+      50%      { box-shadow: 0 0 0 10px rgba(134,232,138,0); }
+    }
+
+    .edit-btn {
+      position: absolute; top: 0; right: 0;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: #e8c8d4;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .edit-btn:hover { background: #d4a8bc; transform: rotate(15deg) scale(1.10); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+
+    .section-heading { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 400; color: #000; margin-bottom: 6px; }
+    .section-underline { width: 60px; height: 4px; background: #dec795; border-radius: 2px; margin-bottom: 28px; animation: expandLine 0.5s ease both; transform-origin: left; }
+    @keyframes expandLine { from{transform:scaleX(0);opacity:0;}to{transform:scaleX(1);opacity:1;} }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 36px; }
+
+    .detail-card {
+      border: 1.5px solid #c8c0b4;
+      border-radius: 14px;
+      padding: 18px 22px 22px;
+      background: #fff;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+      animation: cardUp 0.5s ease both;
+      position: relative; overflow: hidden;
+    }
+    .detail-card:nth-child(1){animation-delay:0.10s;}
+    .detail-card:nth-child(2){animation-delay:0.18s;}
+    .detail-card:nth-child(3){animation-delay:0.26s;}
+    .detail-card:nth-child(4){animation-delay:0.34s;}
+    .detail-card:nth-child(5){animation-delay:0.42s;}
+    .detail-card:nth-child(6){animation-delay:0.50s;}
+
+    .detail-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background: linear-gradient(90deg,#dec795,#284cb8,#dec795);
+      background-size:200% 100%; opacity:0; transition:opacity 0.3s;
+      animation: shimmer 2.5s linear infinite;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0;}100%{background-position:-200% 0;} }
+    .detail-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.09); border-color:#284cb8; }
+    .detail-card:hover::before { opacity:1; }
+    .detail-card-label { font-size: 16px; font-weight: 400; color: rgba(0,0,0,0.50); }
+    .detail-card-value { font-size: 22px; font-weight: 400; color: #000; word-break: break-word; }
+    .detail-card-value[contenteditable="true"] { outline: none; border-bottom: 1.5px dashed #284cb8; padding-bottom: 2px; }
+
+    .about-text { font-size: 17px; font-weight: 400; color: #333; line-height: 1.7; margin-bottom: 36px; animation: cardUp 0.5s 0.3s ease both; }
+
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 36px; }
+
+    .internship-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; }
+    .internship-item {
+      background: rgba(209,201,186,0.18);
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex; align-items: center; justify-content: space-between;
+      border: 1px solid rgba(209,201,186,0.6);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      animation: cardUp 0.4s ease both;
+      cursor: pointer;
+    }
+    .internship-item:nth-child(1){animation-delay:0.10s;}
+    .internship-item:nth-child(2){animation-delay:0.18s;}
+    .internship-item:nth-child(3){animation-delay:0.26s;}
+    .internship-item:hover { transform:translateY(-3px); box-shadow:0 8px 22px rgba(0,0,0,0.09); background:rgba(209,201,186,0.32); }
+
+    .internship-item-info { display: flex; flex-direction: column; gap: 4px; }
+    .internship-item-title { font-size: 19px; font-weight: 600; color: #000; }
+    .internship-item-meta  { font-size: 15px; color: rgba(0,0,0,0.55); }
+
+    .status-chip-active { background: #86e88a; border: none; border-radius: 20px; padding: 6px 18px; font-size: 14px; font-weight: 600; color: #000; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .status-chip-active:hover { background: #5fd464; transform: scale(1.05); }
+    .status-chip-closed { background: #f0e6e6; border: 1px solid #e53935; border-radius: 20px; padding: 6px 18px; font-size: 14px; font-weight: 600; color: #e53935; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 500; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-card { background: #fff; border-radius: 16px; width: 540px; max-width: 94vw; padding: 36px 36px 32px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.18); animation: modalPop 0.25s cubic-bezier(0.22,1,0.36,1) both; max-height: 90vh; overflow-y: auto; }
+    @keyframes modalPop { from{opacity:0;transform:scale(0.92) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);} }
+    .modal-card::before { content:''; position:absolute;top:0;left:0;right:0;height:3px; background:linear-gradient(90deg,#dec795 0%,#284cb8 50%,#dec795 100%); background-size:200% 100%; border-radius:16px 16px 0 0; animation:shimmer 2.5s linear infinite; }
+    .modal-close { position:absolute;top:14px;right:16px; background:rgba(229,57,53,0.08);border:none;border-radius:50%;width:34px;height:34px; display:flex;align-items:center;justify-content:center;font-size:17px;color:#e53935;cursor:pointer;transition:background 0.2s,transform 0.2s; }
+    .modal-close:hover { background:rgba(229,57,53,0.18);transform:rotate(90deg) scale(1.1); }
+    .modal-title { font-size:22px;font-weight:700;color:#000;margin-bottom:20px; }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block;font-size:14px;font-weight:500;color:#555;margin-bottom:5px; }
+    .form-group input, .form-group textarea, .form-group select {
+      width:100%;padding:10px 14px;
+      border:1px solid #d9d9d9;border-radius:8px;
+      font-family:'Inter',sans-serif;font-size:15px;color:#000;
+      outline:none;background:#fff;
+      transition:border-color 0.2s,box-shadow 0.2s;
+    }
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus { border-color:#284cb8;box-shadow:0 0 0 3px rgba(40,76,184,0.10); }
+    .form-group textarea { resize:vertical;min-height:80px; }
+    .save-btn { width:100%;padding:12px;background:#284cb8;color:#fff;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px;transition:background 0.2s,transform 0.15s,box-shadow 0.2s; }
+    .save-btn:hover { background:#1e3a9a;transform:translateY(-2px);box-shadow:0 6px 18px rgba(40,76,184,0.28); }
+
+    .toast { position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#284cb8;color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;padding:12px 26px;border-radius:30px;box-shadow:0 6px 24px rgba(40,76,184,0.30);opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:600;white-space:nowrap; }
+    .toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+
+    .reveal { opacity:0; transform:translateY(20px); transition:opacity 0.55s ease,transform 0.55s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    footer { background:#dec795;height:54px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:30px;font-weight:500;color:#000;flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="icon-btn">🔔</button>
+      <button class="icon-btn">💬</button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item" href="industry-dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a class="nav-item" href="manage-internship.html"><span class="nav-icon">💼</span> Manage Internship</a>
+        <a class="nav-item" href="in-applications.html"><span class="nav-icon">📄</span> Applications</a>
+        <a class="nav-item" href="#"><span class="nav-icon">📈</span> Analytics</a>
+        <a class="nav-item" href="#"><span class="nav-icon">💬</span> Messages</a>
+        <a class="nav-item active" href="#"><span class="nav-icon">👤</span> Profile</a>
+        <a class="nav-item" href="#" id="logout-btn"><span class="nav-icon">🚪</span> Log Out</a>
+      </nav>
+    </aside>
+
+    <main class="main" id="mainContent">
+
+      <div class="page-nav-row">
+        <button class="page-nav-btn" onclick="history.back()" title="Back">&#8592;</button>
+        <button class="page-nav-btn" onclick="history.forward()" title="Forward">&#8594;</button>
+      </div>
+
+      <!-- PROFILE HEADER -->
+      <div class="profile-header">
+
+        <!-- Company Logo — everything is now self-contained inside the 160×160 box -->
+        <div class="company-logo-box">
+          <div class="logo-fallback-box">
+            <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="35" cy="35" r="28" stroke="#c084fc" stroke-width="2.5" fill="none"/>
+              <circle cx="35" cy="35" r="18" stroke="#818cf8" stroke-width="2" fill="none" opacity="0.7"/>
+              <path d="M35 20 Q43 26 43 34 Q43 40 38 43 L38 47 L32 47 L32 43 Q27 40 27 34 Q27 26 35 20Z" fill="none" stroke="#c084fc" stroke-width="1.8"/>
+              <line x1="31" y1="47" x2="39" y2="47" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/>
+              <line x1="31" y1="50" x2="39" y2="50" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="20" cy="20" r="6" stroke="#f472b6" stroke-width="1.5" fill="none"/>
+              <circle cx="20" cy="20" r="2.5" fill="#f472b6"/>
+              <circle cx="52" cy="52" r="5" stroke="#818cf8" stroke-width="1.5" fill="none"/>
+              <circle cx="52" cy="52" r="2" fill="#818cf8"/>
+            </svg>
+            <span class="lf-text">TECH INNOVATIONS</span>
+          </div>
+        </div>
+
+        <div class="company-info">
+          <h1 class="company-name" id="displayName">Techinnovations Ltd</h1>
+          <p class="company-type" id="displayType">Software Development Company</p>
+          <div class="profile-active-badge" id="activeBadge" onclick="toggleStatus()">
+            <span>Profile Active</span>
+          </div>
+        </div>
+
+        <button class="edit-btn" id="openEditBtn" title="Edit Profile">✏️</button>
+      </div>
+
+      <!-- COMPANY DETAILS -->
+      <div class="reveal">
+        <p class="section-heading">Company Details</p>
+        <div class="section-underline"></div>
+        <div class="detail-grid">
+          <div class="detail-card"><span class="detail-card-label">Founded Year</span><span class="detail-card-value" id="valFounded">2015</span></div>
+          <div class="detail-card"><span class="detail-card-label">Company Size</span><span class="detail-card-value" id="valSize">50-100 Employees</span></div>
+          <div class="detail-card"><span class="detail-card-label">Headquarters</span><span class="detail-card-value" id="valHQ">Chennai, India</span></div>
+          <div class="detail-card"><span class="detail-card-label">Website</span><span class="detail-card-value"><a id="valWebsite" href="https://www.techinnovations.com" target="_blank" style="color:#284cb8;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">www.techinnovations.com</a></span></div>
+          <div class="detail-card"><span class="detail-card-label">Industry</span><span class="detail-card-value" id="valIndustry">Information Technology</span></div>
+          <div class="detail-card"><span class="detail-card-label">Type</span><span class="detail-card-value" id="valType">Private Limited</span></div>
+        </div>
+      </div>
+
+      <!-- CONTACT INFORMATION -->
+      <div class="reveal">
+        <p class="section-heading">Contact Information</p>
+        <div class="section-underline"></div>
+        <div class="contact-grid">
+          <div class="detail-card"><span class="detail-card-label">Email</span><span class="detail-card-value" id="valEmail">contact@techinnovations.com</span></div>
+          <div class="detail-card"><span class="detail-card-label">Phone</span><span class="detail-card-value" id="valPhone">+91 98765 43210</span></div>
+          <div class="detail-card"><span class="detail-card-label">LinkedIn</span><span class="detail-card-value"><a href="#" style="color:#284cb8;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" id="valLinkedIn">linkedin.com/company/techinnovations</a></span></div>
+          <div class="detail-card"><span class="detail-card-label">Location</span><span class="detail-card-value" id="valLocation">Anna Nagar, Chennai – 600040</span></div>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="reveal">
+        <p class="section-heading">About the Company</p>
+        <div class="section-underline"></div>
+        <p class="about-text" id="valAbout">
+          Techinnovations Ltd is a leading software development company based in Chennai, India, founded in 2015.
+          We specialize in building scalable web applications, enterprise software, and innovative digital products
+          for clients across the globe. Our team of 50–100 talented engineers is passionate about solving complex
+          problems with clean, efficient code. We offer internship programs to nurture the next generation of
+          technology professionals, providing hands-on experience in real-world projects.
+        </p>
+      </div>
+
+      <!-- INTERNSHIPS POSTED -->
+      <div class="reveal">
+        <p class="section-heading">Internships Posted</p>
+        <div class="section-underline"></div>
+        <div class="internship-list">
+          <div class="internship-item">
+            <div class="internship-item-info">
+              <span class="internship-item-title">Frontend Developer Intern</span>
+              <span class="internship-item-meta">Chennai &nbsp;·&nbsp; 3 Months &nbsp;·&nbsp; ₹5,000/month</span>
+            </div>
+            <button class="status-chip-active">Active</button>
+          </div>
+          <div class="internship-item">
+            <div class="internship-item-info">
+              <span class="internship-item-title">Backend Developer Intern</span>
+              <span class="internship-item-meta">Chennai &nbsp;·&nbsp; 4 Months &nbsp;·&nbsp; ₹8,000/month</span>
+            </div>
+            <button class="status-chip-active">Active</button>
+          </div>
+          <div class="internship-item">
+            <div class="internship-item-info">
+              <span class="internship-item-title">UI/UX Designer Intern</span>
+              <span class="internship-item-meta">Remote &nbsp;·&nbsp; 6 Months &nbsp;·&nbsp; ₹10,000/month</span>
+            </div>
+            <span class="status-chip-closed">Closed</span>
+          </div>
+          <div class="internship-item">
+            <div class="internship-item-info">
+              <span class="internship-item-title">Data Analytics Intern</span>
+              <span class="internship-item-meta">Hyderabad &nbsp;·&nbsp; 6 Months &nbsp;·&nbsp; ₹12,000/month</span>
+            </div>
+            <button class="status-chip-active">Active</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <footer>© 2026 InternshipHub | All rights reserved</footer>
+
+  <!-- EDIT MODAL -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <p class="modal-title">Edit Company Profile</p>
+      <div class="form-group"><label>Company Name</label><input type="text" id="editName" value="Techinnovations Ltd"/></div>
+      <div class="form-group"><label>Company Type</label><input type="text" id="editCompType" value="Software Development Company"/></div>
+      <div class="form-group"><label>Founded Year</label><input type="text" id="editFounded" value="2015"/></div>
+      <div class="form-group">
+        <label>Company Size</label>
+        <select id="editSize">
+          <option>1-10 Employees</option>
+          <option>10-50 Employees</option>
+          <option selected>50-100 Employees</option>
+          <option>100-500 Employees</option>
+          <option>500+ Employees</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Headquarters</label><input type="text" id="editHQ" value="Chennai, India"/></div>
+      <div class="form-group"><label>Website</label><input type="text" id="editWebsite" value="www.techinnovations.com"/></div>
+      <div class="form-group"><label>Email</label><input type="email" id="editEmail" value="contact@techinnovations.com"/></div>
+      <div class="form-group"><label>Phone</label><input type="text" id="editPhone" value="+91 98765 43210"/></div>
+      <div class="form-group"><label>Industry</label><input type="text" id="editIndustry" value="Information Technology"/></div>
+      <div class="form-group"><label>About</label><textarea id="editAbout">Techinnovations Ltd is a leading software development company based in Chennai, India, founded in 2015. We specialize in building scalable web applications, enterprise software, and innovative digital products for clients across the globe.</textarea></div>
+      <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    document.getElementById('openEditBtn').addEventListener('click', () => {
+      document.getElementById('editModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+
+    function closeModal() {
+      const overlay = document.getElementById('editModal');
+      const mc      = overlay.querySelector('.modal-card');
+      mc.style.transition = 'opacity 0.25s,transform 0.25s';
+      mc.style.opacity    = '0';
+      mc.style.transform  = 'scale(0.93) translateY(14px)';
+      setTimeout(() => {
+        overlay.classList.remove('open');
+        mc.style.opacity=''; mc.style.transform='';
+        document.body.style.overflow = '';
+      }, 260);
+    }
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
+
+    function saveProfile() {
+      const name     = document.getElementById('editName').value.trim();
+      const compType = document.getElementById('editCompType').value.trim();
+      const founded  = document.getElementById('editFounded').value.trim();
+      const size     = document.getElementById('editSize').value;
+      const hq       = document.getElementById('editHQ').value.trim();
+      const website  = document.getElementById('editWebsite').value.trim();
+      const email    = document.getElementById('editEmail').value.trim();
+      const phone    = document.getElementById('editPhone').value.trim();
+      const industry = document.getElementById('editIndustry').value.trim();
+      const about    = document.getElementById('editAbout').value.trim();
+
+      if (name)     document.getElementById('displayName').textContent  = name;
+      if (compType) document.getElementById('displayType').textContent  = compType;
+      if (founded)  document.getElementById('valFounded').textContent   = founded;
+      if (size)     document.getElementById('valSize').textContent      = size;
+      if (hq)       document.getElementById('valHQ').textContent        = hq;
+      if (website) {
+        const a = document.getElementById('valWebsite');
+        a.textContent = website;
+        a.href = website.startsWith('http') ? website : 'https://' + website;
+      }
+      if (email)    document.getElementById('valEmail').textContent     = email;
+      if (phone)    document.getElementById('valPhone').textContent     = phone;
+      if (industry) document.getElementById('valIndustry').textContent  = industry;
+      if (about)    document.getElementById('valAbout').textContent     = about;
+
+      closeModal();
+      showToast('✅ Profile updated successfully!');
+    }
+
+    function toggleStatus() {
+      const badge = document.getElementById('activeBadge');
+      const isActive = badge.style.background === 'rgb(239,83,67)' || badge.textContent.includes('Inactive');
+      if (isActive) {
+        badge.style.background = '#86e88a';
+        badge.style.color = '#000';
+        badge.innerHTML = '<span>Profile Active</span>';
+        showToast('✅ Profile is now Active');
+      } else {
+        badge.style.background = '#ef5343';
+        badge.style.color      = '#fff';
+        badge.innerHTML = '<span>Profile Inactive</span>';
+        showToast('⚠️ Profile set to Inactive');
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) window.location.href = 'industry-dashboard.html';
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.internship-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (e.target.tagName === 'BUTTON') return;
+        const title = this.querySelector('.internship-item-title').textContent;
+        showToast(`📋 Viewing: ${title}`);
+      });
+    });
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+
+</body>
+</html>

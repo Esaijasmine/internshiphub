@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internship Details</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f4f4f4;
+}
+
+/* Overlay */
+.overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.3);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    animation:fadeIn 0.4s ease;
+}
+
+/* Modal */
+.modal{
+    width:700px;
+    background:#e6dcc8;
+    border-radius:12px;
+    padding:30px;
+    position:relative;
+    animation:slideUp 0.5s ease;
+}
+
+/* Close Button */
+.close{
+    position:absolute;
+    top:15px;
+    right:20px;
+    font-size:22px;
+    cursor:pointer;
+    color:#ff4d4d;
+    transition:0.3s;
+}
+
+.close:hover{
+    transform:rotate(90deg) scale(1.2);
+}
+
+.title{
+    text-align:center;
+    color:#2f55d4;
+    font-size:24px;
+    margin-bottom:10px;
+}
+
+.profile{
+    text-align:center;
+}
+
+.profile img{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    margin:10px 0;
+}
+
+.role{
+    font-size:22px;
+    font-weight:600;
+}
+
+.company{
+    color:gray;
+    margin-bottom:10px;
+}
+
+.info{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    margin:15px 0;
+    font-size:16px;
+}
+
+.section-title{
+    color:#2f55d4;
+    margin-top:20px;
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+ul{
+    padding-left:20px;
+}
+
+.desc{
+    margin-top:15px;
+    text-align:center;
+}
+
+.skills{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.skill{
+    border:1px solid #ccc;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:13px;
+    background:white;
+    transition:0.3s;
+}
+
+.skill:hover{
+    background:#2f55d4;
+    color:white;
+    transform:scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+@keyframes slideUp{
+    from{
+        transform:translateY(50px);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="modal">
+    <div class="modal">
+        <div class="close" onclick="goBack()">✖</div>
+
+        <h2 class="title">View Details</h2>
+
+        <div class="profile">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+            <div class="role">Frontend Developer Intern</div>
+            <div class="company">ABC Technologies Pvt Ltd.</div>
+        </div>
+
+        <div class="info">
+            <div>📍 Chennai</div>
+            <div>⏳ 3 Months</div>
+            <div>💰 ₹12,000/Month</div>
+        </div>
+
+        <div class="section-title">Responsibilities</div>
+        <ul>
+            <li>Develop responsive web pages</li>
+            <li>Optimize UI performance</li>
+            <li>Collaborate with backend team</li>
+            <li>Maintain code quality standards</li>
+        </ul>
+
+        <div class="desc">
+            Collaborate with UI teams to build responsive and scalable web applications.
+        </div>
+
+        <div class="section-title">Skills Required</div>
+
+        <div class="skills">
+            <div class="skill">HTML</div>
+            <div class="skill">CSS</div>
+            <div class="skill">JavaScript</div>
+            <div class="skill">Responsive Design</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function goBack(){
+    document.getElementById('modal').style.animation = 'fadeOut 0.3s ease';
+    setTimeout(()=>{
+        window.location.href = 'browse-internships.html';
+    },300);
+}
+
+// Optional fadeOut animation
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes fadeOut{
+    from{opacity:1}
+    to{opacity:0}
+}`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>

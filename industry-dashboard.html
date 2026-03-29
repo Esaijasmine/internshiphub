@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Industry Dashboard – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════
+       TOP NAV  ——  #dec795
+    ══════════════════════════════════════ */
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      padding: 0 44px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      color: #000;
+      letter-spacing: -0.5px;
+    }
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .search-wrap { position: relative; width: 260px; }
+    .search-wrap input {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: #1e1e1e;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus {
+      border-color: #284cb8;
+      box-shadow: 0 0 0 3px rgba(40,76,184,0.10);
+    }
+    .search-icon {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px; color: #666; pointer-events: none;
+    }
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 26px; width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.07); transform: scale(1.1); }
+
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .layout { display: flex; flex: 1; }
+
+    /* ══════════════════════════════════════
+       SIDEBAR  ——  #d9d9d9
+    ══════════════════════════════════════ */
+    .sidebar {
+      width: 310px; min-width: 310px;
+      background: #d9d9d9;
+      padding: 16px 0;
+      min-height: calc(100vh - 100px - 54px);
+    }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 20px;
+      font-size: 26px; font-weight: 400;
+      color: #000; text-decoration: none; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, border-color 0.15s, padding-left 0.2s;
+    }
+    .nav-item:hover { background: rgba(0,0,0,0.06); padding-left: 28px; }
+    .nav-item.active {
+      color: #284cb8;
+      border-left-color: #284cb8;
+      background: rgba(40,76,184,0.05);
+    }
+    .nav-icon {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      padding: 24px 32px 40px 24px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ══════════════════════════════════════
+       TOP 4 FEATURE CARDS GRID
+    ══════════════════════════════════════ */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .feature-card {
+      border-radius: 14px;
+      padding: 24px 22px 26px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s, box-shadow 0.25s;
+      animation: cardUp 0.55s ease both;
+    }
+    .feature-card:nth-child(1) { animation-delay: 0.08s; background: #d6e8f5; } /* light blue */
+    .feature-card:nth-child(2) { animation-delay: 0.18s; background: #e8d5b8; } /* light tan   */
+    .feature-card:nth-child(3) { animation-delay: 0.28s; background: #d4edda; } /* light green */
+    .feature-card:nth-child(4) { animation-delay: 0.38s; background: #d8d4ef; } /* light purple*/
+
+    @keyframes cardUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* shimmer top on hover */
+    .feature-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      animation: shimmer 2.5s linear infinite;
+      background-size: 200% 100%;
+    }
+    .feature-card:nth-child(1)::before { background: linear-gradient(90deg,#284cb8,#7ecef4,#284cb8); }
+    .feature-card:nth-child(2)::before { background: linear-gradient(90deg,#c8860a,#dec795,#c8860a); }
+    .feature-card:nth-child(3)::before { background: linear-gradient(90deg,#1a7a2e,#34c759,#1a7a2e); }
+    .feature-card:nth-child(4)::before { background: linear-gradient(90deg,#5b4fcf,#9c89e8,#5b4fcf); }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .feature-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(0,0,0,0.12); }
+    .feature-card:hover::before { opacity: 1; }
+
+    /* card icon circle */
+    .card-icon-wrap {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.65);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .feature-card:hover .card-icon-wrap { transform: scale(1.10) rotate(-5deg); }
+
+    .card-title {
+      font-size: 22px; font-weight: 700;
+    }
+    /* each card gets its own title colour */
+    .feature-card:nth-child(1) .card-title { color: #1a4a8c; }
+    .feature-card:nth-child(2) .card-title { color: #c8860a; }
+    .feature-card:nth-child(3) .card-title { color: #1a7a2e; }
+    .feature-card:nth-child(4) .card-title { color: #4a3daa; }
+
+    .card-desc {
+      font-size: 16px; font-weight: 400; color: #000;
+      line-height: 1.5;
+    }
+
+    /* action buttons on feature cards */
+    .card-btn {
+      border: none; border-radius: 8px;
+      padding: 13px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px; font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 6px;
+      position: relative; overflow: hidden;
+      transition: transform 0.18s, box-shadow 0.18s, filter 0.18s;
+    }
+    .feature-card:nth-child(1) .card-btn { background: #7b52c8; }  /* purple  */
+    .feature-card:nth-child(2) .card-btn { background: #c8860a; }  /* gold    */
+    .feature-card:nth-child(3) .card-btn { background: #1a7a2e; }  /* green   */
+    .feature-card:nth-child(4) .card-btn { background: #3a6080; }  /* steel   */
+    .card-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.18); filter: brightness(1.08); }
+    .card-btn:active { transform: translateY(0); }
+    /* shimmer sweep */
+    .card-btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.22) 50%,transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.5s;
+    }
+    .card-btn:hover::after { transform: translateX(100%); }
+
+    /* ripple */
+    .ripple {
+      position: absolute; border-radius: 50%;
+      transform: scale(0);
+      animation: rippleAnim 0.55s linear;
+      background: rgba(255,255,255,0.35);
+      pointer-events: none;
+    }
+    @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+    /* ══════════════════════════════════════
+       APPLICATION OVERVIEW
+    ══════════════════════════════════════ */
+    .section-heading {
+      font-size: 22px; font-weight: 600;
+      color: #284cb8;
+      margin-bottom: 10px;
+      animation: fadeDown 0.45s ease both;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .overview-bar {
+      display: flex;
+      align-items: stretch;
+      border-radius: 8px;
+      overflow: hidden;
+      gap: 2px;
+      animation: cardUp 0.5s 0.1s ease both;
+    }
+
+    .ov-item {
+      display: flex; align-items: center; gap: 0;
+      flex: 1;
+      overflow: hidden;
+      border-radius: 6px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+    .ov-item:hover { transform: scaleY(1.04); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+
+    .ov-count {
+      padding: 14px 16px;
+      font-size: 18px; font-weight: 700; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      min-width: 50px;
+    }
+    .ov-label {
+      flex: 1;
+      padding: 14px 12px;
+      font-size: 16px; font-weight: 600; color: #fff;
+      display: flex; align-items: center;
+    }
+
+    /* Figma colours for each overview item */
+    .ov-new    .ov-count { background: #7b52c8; }
+    .ov-new    .ov-label { background: #9b72e8; }
+    .ov-short  .ov-count { background: #22b722; }
+    .ov-short  .ov-label { background: #34d434; }
+    .ov-int    .ov-count { background: #e07800; }
+    .ov-int    .ov-label { background: #f59300; }
+    .ov-hired  .ov-count { background: #8844cc; }
+    .ov-hired  .ov-label { background: #aa66ee; }
+
+    /* counter animation */
+    .ov-count[data-target] { transition: none; }
+
+    /* ══════════════════════════════════════
+       RECENT APPLICATIONS TABLE
+    ══════════════════════════════════════ */
+    .recent-section {
+      animation: cardUp 0.5s 0.2s ease both;
+    }
+
+    .table-wrap {
+      background: #f7f5f0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .app-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .app-table thead tr {
+      background: transparent;
+    }
+    .app-table thead th {
+      padding: 16px 20px;
+      font-size: 18px; font-weight: 600; color: #000;
+      text-align: left;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+    .app-table tbody tr {
+      background: #fff;
+      border-bottom: 1px solid rgba(209,201,186,0.45);
+      transition: background 0.18s, transform 0.18s;
+      animation: rowSlide 0.45s ease both;
+    }
+    .app-table tbody tr:nth-child(1) { animation-delay: 0.30s; }
+    .app-table tbody tr:nth-child(2) { animation-delay: 0.40s; }
+    .app-table tbody tr:nth-child(3) { animation-delay: 0.50s; }
+    @keyframes rowSlide {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .app-table tbody tr:last-child { border-bottom: none; }
+    .app-table tbody tr:hover { background: #f0eee8; }
+    .app-table tbody td {
+      padding: 16px 20px;
+      font-size: 17px; font-weight: 400; color: #000;
+    }
+
+    /* status text colours */
+    .status-under-review { color: #000; }
+    .status-shortlisted  { color: #284cb8; font-weight: 500; }
+    .status-interview    { color: #000; }
+
+    /* action chips */
+    .action-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: none; border-radius: 6px;
+      padding: 7px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s, filter 0.18s;
+      position: relative; overflow: hidden;
+    }
+    .chip-review    { background: #4cba7a; }
+    .chip-view      { background: #7ecef4; }
+    .chip-scheduled { background: #7ecef4; }
+    .action-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+      filter: brightness(1.08);
+    }
+    .action-chip:active { transform: translateY(0); }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: #dec795;
+      height: 54px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 30px; font-weight: 500; color: #000;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #284cb8; color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 500;
+      padding: 12px 26px; border-radius: 30px;
+      box-shadow: 0 6px 24px rgba(40,76,184,0.30);
+      opacity: 0; transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none; z-index: 600; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here" id="searchInput"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="icon-btn">🔔</button>
+      <button class="icon-btn">💬</button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item active" href="#">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">💼</span> Manage Internship
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">📄</span> Applications
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">📈</span> Analytics
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">💬</span> Messages
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">👤</span> Profile
+        </a>
+        <a class="nav-item" href="#" id="logout-btn">
+          <span class="nav-icon">🚪</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- ── FEATURE CARDS GRID ── -->
+      <div class="feature-grid">
+
+        <!-- Card 1: Create Industry Profile — light blue bg -->
+        <div class="feature-card">
+          <div class="card-icon-wrap">🏭</div>
+          <p class="card-title">Create Industry Profile</p>
+          <p class="card-desc">Register your company and create your industry profile.</p>
+          <button class="card-btn" onclick="handleBtn(this,'Set Up Profile',event)">Set Up Profile</button>
+        </div>
+
+        <!-- Card 2: Post Internship Positions — light tan bg -->
+        <div class="feature-card">
+          <div class="card-icon-wrap">💼</div>
+          <p class="card-title">Post Internship Positions</p>
+          <p class="card-desc">Post internship opportunities with job details and deadlines.</p>
+          <button class="card-btn" onclick="handleBtn(this,'Post New Internship',event)">Post New Internship</button>
+        </div>
+
+        <!-- Card 3: Manage Applications — light green bg -->
+        <div class="feature-card">
+          <div class="card-icon-wrap">📋</div>
+          <p class="card-title">Manage Applications</p>
+          <p class="card-desc">Review and shortlist received applications.</p>
+          <button class="card-btn" onclick="handleBtn(this,'View Applications',event)">View Applications</button>
+        </div>
+
+        <!-- Card 4: Schedule Interviews — light purple bg -->
+        <div class="feature-card">
+          <div class="card-icon-wrap">📅</div>
+          <p class="card-title">Schedule interviews</p>
+          <p class="card-desc">Contact and schedule interview with candidates.</p>
+          <button class="card-btn" onclick="handleBtn(this,'Schedule interview',event)">Schedule interview</button>
+        </div>
+
+      </div>
+
+      <!-- ── APPLICATION OVERVIEW ── -->
+      <div>
+        <p class="section-heading">Application Overview</p>
+        <div class="overview-bar">
+          <div class="ov-item ov-new">
+            <div class="ov-count" data-target="24" id="cnt1">0</div>
+            <div class="ov-label">New Applications</div>
+          </div>
+          <div class="ov-item ov-short">
+            <div class="ov-count" data-target="8" id="cnt2">0</div>
+            <div class="ov-label">Shortlisted</div>
+          </div>
+          <div class="ov-item ov-int">
+            <div class="ov-count" data-target="5" id="cnt3">0</div>
+            <div class="ov-label">InterviewScheduled</div>
+          </div>
+          <div class="ov-item ov-hired">
+            <div class="ov-count" data-target="2" id="cnt4">0</div>
+            <div class="ov-label">Hired</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RECENT APPLICATIONS ── -->
+      <div class="recent-section">
+        <p class="section-heading">Recent Applications</p>
+        <div class="table-wrap">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>Applicant Name</th>
+                <th>Position Applied For</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sarah Johnson</td>
+                <td>Marketing Intern</td>
+                <td class="status-under-review">Under Review</td>
+                <td>
+                  <button class="action-chip chip-review" onclick="handleAction(this,'Review',event)">Review</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Roselin</td>
+                <td>Finance Intern</td>
+                <td class="status-shortlisted">Shortlisted</td>
+                <td>
+                  <button class="action-chip chip-view" onclick="handleAction(this,'View',event)">View</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Akshitha</td>
+                <td>Data Analytics Intern</td>
+                <td class="status-interview">Interview Scheduled</td>
+                <td>
+                  <button class="action-chip chip-scheduled" onclick="handleAction(this,'Scheduled',event)">Scheduled</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>© 2026 InternshipHub| All rights reserved</footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+    /* ── ANIMATED COUNTERS ───────────────────────────────── */
+    function animateCounter(el, target, duration) {
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { el.textContent = target; clearInterval(timer); }
+        else el.textContent = Math.floor(start);
+      }, 16);
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        animateCounter(document.getElementById('cnt1'), 24, 900);
+        animateCounter(document.getElementById('cnt2'),  8, 700);
+        animateCounter(document.getElementById('cnt3'),  5, 600);
+        animateCounter(document.getElementById('cnt4'),  2, 500);
+      }, 400);
+    });
+
+    /* ── FEATURE CARD BUTTONS ────────────────────────────── */
+    function handleBtn(btn, label, e) {
+      e.stopPropagation();
+      addRipple(btn, e);
+      showToast(`🚀 Opening: ${label}`);
+    }
+
+    /* ── ACTION CHIPS ────────────────────────────────────── */
+    function handleAction(btn, action, e) {
+      e.stopPropagation();
+      addRipple(btn, e);
+      const row  = btn.closest('tr');
+      const name = row.querySelector('td').textContent;
+      showToast(`✅ ${action}: ${name}`);
+    }
+
+    /* ── RIPPLE ──────────────────────────────────────────── */
+    function addRipple(el, e) {
+      const r    = document.createElement('span');
+      r.classList.add('ripple');
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${size}px;height:${size}px;
+        left:${(e.clientX||rect.width/2)  - rect.left - size/2}px;
+        top:${(e.clientY||rect.height/2)  - rect.top  - size/2}px`;
+      el.appendChild(r);
+      setTimeout(() => r.remove(), 650);
+    }
+
+    /* ── SEARCH FILTER ───────────────────────────────────── */
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('.app-table tbody tr').forEach(row => {
+        row.style.display = (!q || row.innerText.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+
+    /* ── SIDEBAR ACTIVE ──────────────────────────────────── */
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function (e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) window.location.href = 'stu-dashboard.html';
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    /* ── TOAST ───────────────────────────────────────────── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+
+</body>
+</html>

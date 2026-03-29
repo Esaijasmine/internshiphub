@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #dec795;          /* Figma warm gold page bg */
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── subtle floating blobs for depth ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.30;
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .blob-1 { width:420px;height:420px;background:#c8a85a;top:-120px;left:-120px;animation-delay:0s; }
+    .blob-2 { width:320px;height:320px;background:#f0d8a0;bottom:-80px;right:-80px;animation-delay:4s; }
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(24px,16px) scale(1.06); }
+    }
+
+    /* ══════════════════════════════════════
+       OUTER WRAPPER CARD
+    ══════════════════════════════════════ */
+    .payment-wrapper {
+      position: relative;
+      z-index: 10;
+      background: #e8d9b8;           /* Figma outer card warm beige */
+      border-radius: 18px;
+      padding: 36px 36px 36px 36px;
+      width: 100%;
+      max-width: 1060px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
+      animation: wrapIn 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes wrapIn {
+      from { opacity:0; transform:translateY(28px) scale(0.97); }
+      to   { opacity:1; transform:translateY(0)    scale(1); }
+    }
+    /* shimmer top border */
+    .payment-wrapper::before {
+      content:'';
+      position:absolute; top:0; left:0; right:0; height:3px;
+      background: linear-gradient(90deg,#dec795 0%,#4169e1 50%,#dec795 100%);
+      background-size:200% 100%;
+      border-radius:18px 18px 0 0;
+      animation: shimmer 3s linear infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position:200% 0; }
+      100% { background-position:-200% 0; }
+    }
+
+    /* ══════════════════════════════════════
+       LEFT COLUMN
+    ══════════════════════════════════════ */
+    .left-col { display:flex; flex-direction:column; gap:20px; }
+
+    /* Page title */
+    .pay-heading {
+      font-size:28px; font-weight:600;
+      color:#3c64de;                  /* Figma blue heading */
+      margin-bottom:2px;
+      animation: fadeDown 0.5s 0.1s ease both;
+    }
+    @keyframes fadeDown {
+      from { opacity:0; transform:translateY(-10px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .pay-subheading {
+      font-size:20px; font-weight:600; color:#000;
+      line-height:1.45;
+      animation: fadeDown 0.5s 0.18s ease both;
+    }
+
+    /* ── TABS: Credit/Debit Card | UPI ── */
+    .tab-row {
+      display:flex; align-items:center; gap:28px;
+      margin-bottom:4px;
+      animation: fadeDown 0.5s 0.24s ease both;
+    }
+    .tab-btn {
+      background:none; border:none; cursor:pointer;
+      font-family:'Inter',sans-serif;
+      font-size:20px; font-weight:600;
+      padding:4px 0 6px;
+      border-bottom:3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn.active-tab  { color:#e53935; border-bottom-color:#e53935; }
+    .tab-btn.inactive-tab{ color:#3c64de; border-bottom-color:transparent; }
+    .tab-btn:hover { opacity:0.8; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background:#fff;
+      border-radius:12px;
+      padding:22px 24px 26px;
+      display:flex; flex-direction:column; gap:18px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.06);
+      transition:box-shadow 0.25s;
+      animation: cardUp 0.5s 0.3s ease both;
+    }
+    @keyframes cardUp {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .form-card:hover { box-shadow:0 8px 28px rgba(0,0,0,0.10); }
+
+    /* field group */
+    .field-group { display:flex; flex-direction:column; gap:4px; }
+    .field-label {
+      font-size:17px; font-weight:600; color:#000;
+    }
+    .field-input {
+      font-family:'Inter',sans-serif;
+      font-size:16px; font-weight:400; color:#888;
+      border:none; outline:none;
+      padding:6px 0;
+      border-bottom:1.5px solid transparent;
+      background:transparent;
+      transition:border-color 0.2s, color 0.2s;
+      width:100%;
+    }
+    .field-input:focus { border-bottom-color:#3c64de; color:#000; }
+    .field-input::placeholder { color:#aaa; }
+
+    /* card number row */
+    .card-number-row {
+      display:flex; align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .card-number-inputs { display:flex; flex-direction:column; gap:4px; flex:1; }
+    .card-chunks {
+      display:flex; gap:14px;
+    }
+    .card-chunks input {
+      width:68px; font-family:'Inter',sans-serif;
+      font-size:16px; font-weight:400; color:#888;
+      border:none; border-bottom:1.5px solid transparent;
+      outline:none; background:transparent; text-align:center;
+      transition:border-color 0.2s, color 0.2s;
+      padding:4px 0;
+    }
+    .card-chunks input:focus { border-bottom-color:#3c64de; color:#000; }
+    .card-chunks input::placeholder { color:#aaa; }
+    /* card brand icons row */
+    .card-brands {
+      display:flex; align-items:center; gap:6px; flex-shrink:0; padding-top:22px;
+    }
+    .brand-pill {
+      border-radius:4px; padding:4px 8px;
+      font-size:11px; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      height:28px;
+    }
+    .brand-visa    { background:#1a1f71; color:#f7b600; font-size:13px; font-style:italic; letter-spacing:1px; }
+    .brand-mc      { background:#fff; border:1px solid #ddd; }
+    .brand-amex    { background:#2671b2; color:#fff; font-size:10px; letter-spacing:0.5px; }
+    .brand-disc    { background:#fff; border:1px solid #ddd; color:#e55b00; font-size:10px; font-weight:700; }
+
+    /* exp + cvv side by side */
+    .exp-cvv-row { display:flex; gap:40px; }
+    .half-field  { display:flex; flex-direction:column; gap:4px; }
+
+    /* ── SECURITY NOTE ── */
+    .security-note {
+      display:flex; align-items:flex-start; gap:12px;
+      animation: cardUp 0.5s 0.42s ease both;
+    }
+    .lock-icon {
+      width:40px; height:40px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:22px;
+    }
+    .security-text {
+      font-size:16px; font-weight:400;
+      color:#3c64de;
+      line-height:1.5;
+    }
+
+    /* ── PAY BUTTON ── */
+    .pay-btn {
+      background:#4169e1;            /* Figma blue pay button */
+      color:#fff;
+      border:none; border-radius:10px;
+      padding:16px 0;
+      width:75%;
+      font-family:'Inter',sans-serif;
+      font-size:22px; font-weight:600;
+      cursor:pointer;
+      letter-spacing:0.5px;
+      align-self:center;
+      position:relative; overflow:hidden;
+      transition:background 0.2s, transform 0.18s, box-shadow 0.2s;
+      box-shadow:0 4px 18px rgba(65,105,225,0.35);
+      animation: cardUp 0.5s 0.5s ease both;
+    }
+    .pay-btn:hover {
+      background:#2d55cc;
+      transform:translateY(-2px);
+      box-shadow:0 8px 28px rgba(65,105,225,0.45);
+    }
+    .pay-btn:active { transform:translateY(0); }
+    /* shimmer sweep on button */
+    .pay-btn::after {
+      content:'';
+      position:absolute; inset:0;
+      background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.22) 50%,transparent 60%);
+      transform:translateX(-100%);
+      transition:transform 0.55s;
+    }
+    .pay-btn:hover::after { transform:translateX(100%); }
+
+    /* ripple */
+    .ripple {
+      position:absolute; border-radius:50%;
+      transform:scale(0);
+      animation:rippleAnim 0.55s linear;
+      background:rgba(255,255,255,0.35);
+      pointer-events:none;
+    }
+    @keyframes rippleAnim { to { transform:scale(4); opacity:0; } }
+
+    /* ── SSL SECURE ── */
+    .ssl-row {
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      font-size:17px; font-weight:500; color:#000;
+      animation: cardUp 0.5s 0.55s ease both;
+    }
+
+    /* UPI PANEL (hidden by default) */
+    .upi-panel {
+      display:none;
+      flex-direction:column; gap:16px;
+    }
+    .upi-panel.visible { display:flex; }
+    .upi-input-wrap { display:flex; flex-direction:column; gap:4px; }
+
+    /* ══════════════════════════════════════
+       RIGHT COLUMN — ORDER SUMMARY
+    ══════════════════════════════════════ */
+    .right-col {
+      display:flex; flex-direction:column; gap:0;
+      animation: fadeDown 0.55s 0.2s ease both;
+    }
+
+    .order-summary-card {
+      background:#d6c49a;            /* Figma right panel tan */
+      border-radius:14px;
+      padding:24px 22px 22px;
+      display:flex; flex-direction:column; gap:10px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.06);
+      margin-bottom:20px;
+      transition:box-shadow 0.25s;
+    }
+    .order-summary-card:hover { box-shadow:0 8px 24px rgba(0,0,0,0.10); }
+
+    .order-title {
+      font-size:28px; font-weight:700;
+      color:#3c64de;
+      text-align:center;
+      margin-bottom:8px;
+    }
+
+    .order-section-label {
+      font-size:24px; font-weight:700; color:#000;
+      margin-top:6px;
+    }
+    .order-value-box {
+      background:#fff;
+      border-radius:8px;
+      padding:10px 16px;
+      font-size:19px; font-weight:400;
+      color:#3c64de;
+      width:100%;
+    }
+    .order-value-box.total-val {
+      font-size:22px; font-weight:600;
+      text-align:center;
+      color:#3c64de;
+    }
+
+    /* ── PAYMENT BRANDS STRIP ── */
+    .brands-strip {
+      display:flex; align-items:center; justify-content:center;
+      gap:8px; flex-wrap:wrap;
+      background:#1a1a2e;
+      border-radius:10px;
+      padding:12px 14px;
+      margin-bottom:14px;
+      transition:transform 0.2s;
+    }
+    .brands-strip:hover { transform:scale(1.02); }
+    .brand-icon {
+      border-radius:5px; padding:4px 9px;
+      font-size:12px; font-weight:800;
+      height:30px;
+      display:flex; align-items:center; justify-content:center;
+      white-space:nowrap;
+    }
+    .bi-paypal { background:#003087; color:#009cde; letter-spacing:0.5px; font-size:11px; }
+    .bi-visa   { background:#1a1f71; color:#f7b600; font-style:italic; font-size:13px; }
+    .bi-mc     { position:relative; background:#fff; border-radius:5px; padding:0 8px; }
+    .bi-mc svg { display:block; }
+    .bi-amex   { background:#2671b2; color:#fff; font-size:10px; }
+    .bi-discover { background:#fff; border-radius:5px; }
+
+    /* Secured by Stripe */
+    .stripe-row {
+      text-align:center;
+      font-size:16px; font-weight:500; color:#000;
+      margin-bottom:14px;
+    }
+    .stripe-name { color:#635bff; font-weight:700; }
+
+    /* Security badges */
+    .badges-row {
+      display:flex; align-items:center; justify-content:center;
+      gap:10px; flex-wrap:wrap;
+    }
+    .sec-badge {
+      display:flex; flex-direction:column; align-items:center; gap:2px;
+      background:#fff; border-radius:8px;
+      padding:8px 10px;
+      font-size:10px; font-weight:700;
+      min-width:72px;
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .sec-badge:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.10); }
+    .sec-badge .badge-icon { font-size:18px; }
+    .norton-color  { color:#ffd700; }
+    .mcafee-color  { color:#c00; }
+    .secure-color  { color:#007bff; }
+
+    /* ══════════════════════════════════════
+       SUCCESS OVERLAY
+    ══════════════════════════════════════ */
+    .success-overlay {
+      display:none;
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.50);
+      z-index:500;
+      align-items:center; justify-content:center;
+    }
+    .success-overlay.open { display:flex; }
+    .success-card {
+      background:#fff; border-radius:20px;
+      padding:48px 44px; text-align:center;
+      box-shadow:0 20px 60px rgba(0,0,0,0.20);
+      animation:modalPop 0.28s cubic-bezier(0.22,1,0.36,1) both;
+      max-width:400px; width:94vw;
+      position:relative; overflow:hidden;
+    }
+    .success-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px;
+      background:linear-gradient(90deg,#dec795,#17c425,#dec795);
+      background-size:200% 100%;
+      animation:shimmer 2.5s linear infinite;
+    }
+    @keyframes modalPop {
+      from { opacity:0; transform:scale(0.88) translateY(24px); }
+      to   { opacity:1; transform:scale(1)    translateY(0); }
+    }
+    .success-icon  { font-size:56px; margin-bottom:14px; animation:bounceIn 0.5s 0.2s both; }
+    @keyframes bounceIn {
+      0%   { transform:scale(0); }
+      60%  { transform:scale(1.2); }
+      100% { transform:scale(1); }
+    }
+    .success-title { font-size:24px; font-weight:700; color:#000; margin-bottom:8px; }
+    .success-sub   { font-size:16px; color:#555; margin-bottom:24px; line-height:1.5; }
+    .success-close {
+      background:#4169e1; color:#fff; border:none; border-radius:10px;
+      padding:12px 32px; font-family:'Inter',sans-serif;
+      font-size:16px; font-weight:600; cursor:pointer;
+      transition:background 0.2s, transform 0.15s;
+    }
+    .success-close:hover { background:#2d55cc; transform:translateY(-2px); }
+
+    /* toast */
+    .toast {
+      position:fixed; bottom:30px; left:50%;
+      transform:translateX(-50%) translateY(20px);
+      background:#4169e1; color:#fff;
+      font-family:'Inter',sans-serif;
+      font-size:15px; font-weight:500;
+      padding:12px 26px; border-radius:30px;
+      box-shadow:0 6px 24px rgba(65,105,225,0.30);
+      opacity:0; transition:opacity 0.3s, transform 0.3s;
+      pointer-events:none; z-index:600; white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- background blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- ════════════════════════════════════
+       PAYMENT WRAPPER
+  ════════════════════════════════════ -->
+  <div class="payment-wrapper">
+
+    <!-- ══ LEFT COLUMN ══ -->
+    <div class="left-col">
+
+      <!-- Heading -->
+      <div>
+        <p class="pay-heading">Payment</p>
+        <p class="pay-subheading">Complete your internship registration by entering<br>your payment details.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-row">
+        <button class="tab-btn active-tab"   id="tabCard" onclick="switchTab('card')">Credit/Debit Card</button>
+        <button class="tab-btn inactive-tab" id="tabUpi"  onclick="switchTab('upi')">UPI</button>
+      </div>
+
+      <!-- ── CARD FORM ── -->
+      <div id="cardPanel">
+        <div class="form-card">
+
+          <!-- Email -->
+          <div class="field-group">
+            <span class="field-label">Email</span>
+            <input class="field-input" type="email" id="emailInput" placeholder="Email address"/>
+          </div>
+
+          <!-- Card Number -->
+          <div class="card-number-row">
+            <div class="card-number-inputs">
+              <span class="field-label">Card Number</span>
+              <div class="card-chunks">
+                <input type="text" maxlength="4" placeholder="1234" oninput="autoTab(this)" id="c1"/>
+                <input type="text" maxlength="4" placeholder="1234" oninput="autoTab(this)" id="c2"/>
+                <input type="text" maxlength="4" placeholder="1234" oninput="autoTab(this)" id="c3"/>
+                <input type="text" maxlength="4" placeholder="1234" id="c4"/>
+              </div>
+            </div>
+            <!-- card brand icons -->
+            <div class="card-brands">
+              <div class="brand-pill brand-visa">VISA</div>
+              <!-- Mastercard SVG circles -->
+              <div class="brand-pill brand-mc" style="padding:4px 6px;">
+                <svg width="36" height="22" viewBox="0 0 36 22">
+                  <circle cx="13" cy="11" r="10" fill="#eb001b"/>
+                  <circle cx="23" cy="11" r="10" fill="#f79e1b"/>
+                  <path d="M18 4.8a10 10 0 0 1 0 12.4A10 10 0 0 1 18 4.8z" fill="#ff5f00"/>
+                </svg>
+              </div>
+              <div class="brand-pill brand-amex">AMEX</div>
+              <div class="brand-pill brand-disc">DISCOVER</div>
+            </div>
+          </div>
+
+          <!-- Expiration + CVV -->
+          <div class="exp-cvv-row">
+            <div class="half-field">
+              <span class="field-label">Expiration</span>
+              <input class="field-input" type="text" id="expInput" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)"/>
+            </div>
+            <div class="half-field">
+              <span class="field-label">CVV</span>
+              <input class="field-input" type="password" id="cvvInput" placeholder="CVV" maxlength="4"/>
+            </div>
+          </div>
+
+          <!-- Country -->
+          <div class="field-group">
+            <span class="field-label">Country</span>
+            <input class="field-input" type="text" id="countryInput" value="India"/>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── UPI PANEL ── -->
+      <div id="upiPanel" class="upi-panel">
+        <div class="form-card">
+          <div class="field-group">
+            <span class="field-label">UPI ID</span>
+            <input class="field-input" type="text" id="upiInput" placeholder="yourname@upi"/>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Name on Account</span>
+            <input class="field-input" type="text" placeholder="Full Name"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security note -->
+      <div class="security-note">
+        <div class="lock-icon">🔒</div>
+        <p class="security-text">After Submitting your order,you will be redirected to securely complete your purchase.</p>
+      </div>
+
+      <!-- Pay Button -->
+      <button class="pay-btn" id="payBtn" onclick="handlePay(event)">Pay</button>
+
+      <!-- SSL row -->
+      <div class="ssl-row">
+        <span>🔒</span>
+        <span>SSL Secure Payment</span>
+      </div>
+
+    </div><!-- /left-col -->
+
+
+    <!-- ══ RIGHT COLUMN ══ -->
+    <div class="right-col">
+
+      <!-- Order Summary -->
+      <div class="order-summary-card">
+        <p class="order-title">Order Summary</p>
+
+        <p class="order-section-label">Internship</p>
+        <div class="order-value-box">Cyber Security</div>
+
+        <p class="order-section-label">Company</p>
+        <div class="order-value-box">Tech Nova Solutions</div>
+
+        <p class="order-section-label">Duration</p>
+        <div class="order-value-box">6 Months</div>
+
+        <p class="order-section-label">Total</p>
+        <div class="order-value-box total-val" id="totalBox">2000</div>
+      </div>
+
+      <!-- Payment brand logos -->
+      <div class="brands-strip">
+        <div class="brand-icon bi-paypal">PayPal</div>
+        <div class="brand-icon bi-visa">VISA</div>
+        <!-- MC circles -->
+        <div class="brand-icon bi-mc">
+          <svg width="36" height="22" viewBox="0 0 36 22">
+            <circle cx="13" cy="11" r="10" fill="#eb001b"/>
+            <circle cx="23" cy="11" r="10" fill="#f79e1b"/>
+            <path d="M18 4.8a10 10 0 0 1 0 12.4A10 10 0 0 1 18 4.8z" fill="#ff5f00"/>
+          </svg>
+        </div>
+        <!-- Discover O -->
+        <div class="brand-icon" style="background:#fff;border-radius:5px;padding:2px 6px;">
+          <svg width="32" height="22" viewBox="0 0 32 22">
+            <rect width="32" height="22" rx="3" fill="#fff"/>
+            <circle cx="20" cy="11" r="8" fill="#f76f20"/>
+            <text x="4" y="15" font-size="9" font-weight="700" fill="#231f20" font-family="sans-serif">DIS</text>
+          </svg>
+        </div>
+        <div class="brand-icon bi-amex">AMEX</div>
+      </div>
+
+      <!-- Stripe -->
+      <div class="stripe-row">Secured by <span class="stripe-name">Stripe</span></div>
+
+      <!-- Security badges -->
+      <div class="badges-row">
+        <div class="sec-badge">
+          <span class="badge-icon norton-color">✅</span>
+          <span style="color:#000;font-size:11px;">Norton</span>
+          <span style="color:#555;font-size:9px;">Symantec</span>
+        </div>
+        <div class="sec-badge">
+          <span class="badge-icon mcafee-color">🛡️</span>
+          <span style="color:#c00;font-size:11px;">McAfee</span>
+          <span style="color:#555;font-size:9px;">SECURE</span>
+        </div>
+        <div class="sec-badge">
+          <span class="badge-icon secure-color">🔒</span>
+          <span style="color:#007bff;font-size:11px;">Secure</span>
+          <span style="color:#555;font-size:9px;">Payment</span>
+        </div>
+      </div>
+
+    </div><!-- /right-col -->
+  </div><!-- /payment-wrapper -->
+
+
+  <!-- ══ SUCCESS MODAL ══ -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-card">
+      <div class="success-icon">✅</div>
+      <p class="success-title">Payment Successful!</p>
+      <p class="success-sub">Your internship registration for<br><strong>Cyber Security</strong> at <strong>Tech Nova Solutions</strong><br>has been confirmed. 🎉</p>
+      <button class="success-close" onclick="closeSuccess()">Go to Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+    /* ── TAB SWITCH ──────────────────────────────────────── */
+    function switchTab(tab) {
+      const cardPanel = document.getElementById('cardPanel');
+      const upiPanel  = document.getElementById('upiPanel');
+      const tabCard   = document.getElementById('tabCard');
+      const tabUpi    = document.getElementById('tabUpi');
+
+      if (tab === 'card') {
+        cardPanel.style.display = '';
+        upiPanel.classList.remove('visible');
+        tabCard.className = 'tab-btn active-tab';
+        tabUpi.className  = 'tab-btn inactive-tab';
+      } else {
+        cardPanel.style.display = 'none';
+        upiPanel.classList.add('visible');
+        tabCard.className = 'tab-btn inactive-tab';
+        tabUpi.className  = 'tab-btn active-tab';
+      }
+    }
+
+    /* ── AUTO-TAB CARD NUMBER ────────────────────────────── */
+    const chunks = ['c1','c2','c3','c4'];
+    function autoTab(el) {
+      el.value = el.value.replace(/\D/g,'');
+      if (el.value.length === 4) {
+        const idx = chunks.indexOf(el.id);
+        if (idx < chunks.length - 1) document.getElementById(chunks[idx+1]).focus();
+      }
+    }
+
+    /* ── FORMAT EXPIRY ───────────────────────────────────── */
+    function formatExpiry(el) {
+      let v = el.value.replace(/\D/g,'');
+      if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2,4);
+      el.value = v;
+    }
+
+    /* ── VALIDATE + PAY ──────────────────────────────────── */
+    function handlePay(e) {
+      addRipple(document.getElementById('payBtn'), e);
+
+      const activeTab = document.getElementById('tabCard').classList.contains('active-tab') ? 'card' : 'upi';
+
+      if (activeTab === 'card') {
+        const email  = document.getElementById('emailInput').value.trim();
+        const c1v    = document.getElementById('c1').value.trim();
+        const c2v    = document.getElementById('c2').value.trim();
+        const c3v    = document.getElementById('c3').value.trim();
+        const c4v    = document.getElementById('c4').value.trim();
+        const exp    = document.getElementById('expInput').value.trim();
+        const cvv    = document.getElementById('cvvInput').value.trim();
+
+        if (!email)                            { showToast('⚠️ Please enter your email.'); return; }
+        if (!c1v || !c2v || !c3v || !c4v)     { showToast('⚠️ Please enter your card number.'); return; }
+        if (!exp || exp.length < 5)            { showToast('⚠️ Please enter expiry date (MM/YY).'); return; }
+        if (!cvv || cvv.length < 3)            { showToast('⚠️ Please enter your CVV.'); return; }
+      } else {
+        const upi = document.getElementById('upiInput').value.trim();
+        if (!upi || !upi.includes('@'))        { showToast('⚠️ Please enter a valid UPI ID.'); return; }
+      }
+
+      // success!
+      document.getElementById('successOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    /* ── CLOSE SUCCESS ───────────────────────────────────── */
+    function closeSuccess() {
+      document.getElementById('successOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+      window.location.href = 'stu-dashboard.html';
+    }
+    document.getElementById('successOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeSuccess();
+    });
+
+    /* ── RIPPLE ──────────────────────────────────────────── */
+    function addRipple(el, e) {
+      const r    = document.createElement('span');
+      r.classList.add('ripple');
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${size}px;height:${size}px;
+        left:${(e.clientX||rect.width/2) - rect.left - size/2}px;
+        top:${(e.clientY||rect.height/2) - rect.top  - size/2}px`;
+      el.appendChild(r);
+      setTimeout(() => r.remove(), 650);
+    }
+
+    /* ── TOAST ───────────────────────────────────────────── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+
+</body>
+</html>

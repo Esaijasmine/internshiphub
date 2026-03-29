@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════
+       TOP NAV  ——  #dec795
+    ══════════════════════════════════════ */
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      padding: 0 44px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      color: #000;
+      letter-spacing: -0.5px;
+    }
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .search-wrap { position: relative; width: 260px; }
+    .search-wrap input {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: #1e1e1e;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus {
+      border-color: #284cb8;
+      box-shadow: 0 0 0 3px rgba(40,76,184,0.10);
+    }
+    .search-icon {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px; color: #666; pointer-events: none;
+    }
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 26px; width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+      position: relative;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.07); transform: scale(1.1); }
+    /* bell badge */
+    .bell-badge {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 10px; height: 10px;
+      background: #e53935;
+      border-radius: 50%;
+      border: 2px solid #dec795;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.3); }
+    }
+
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .layout { display: flex; flex: 1; }
+
+    /* ══════════════════════════════════════
+       SIDEBAR  ——  #d9d9d9
+    ══════════════════════════════════════ */
+    .sidebar {
+      width: 338px; min-width: 338px;
+      background: #d9d9d9;
+      padding: 16px 0;
+      min-height: calc(100vh - 100px - 54px);
+    }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 20px;
+      font-size: 28px; font-weight: 400;
+      color: #000; text-decoration: none; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, border-color 0.15s, padding-left 0.2s;
+    }
+    .nav-item:hover { background: rgba(0,0,0,0.06); padding-left: 28px; }
+    .nav-item.active {
+      color: #284cb8;
+      border-left-color: #284cb8;
+      background: rgba(40,76,184,0.05);
+    }
+    .nav-icon {
+      width: 46px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      padding: 28px 36px 40px 28px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── PAGE HEADER ROW ────────────────── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      animation: fadeDown 0.45s ease both;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .page-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 36px;
+      color: #000;
+    }
+    .mark-all-btn {
+      background: none;
+      border: 1.5px solid #b0b0b0;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #284cb8;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .mark-all-btn:hover {
+      background: rgba(40,76,184,0.06);
+      border-color: #284cb8;
+      transform: translateY(-1px);
+    }
+
+    /* ══════════════════════════════════════
+       NOTIFICATION CARD
+    ══════════════════════════════════════ */
+    .notif-card {
+      background: #d9d9d9;           /* Figma #d9d9d9 card bg */
+      border-radius: 14px;
+      padding: 22px 28px 22px 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s, background 0.2s;
+      animation: cardSlide 0.5s ease both;
+    }
+    .notif-card:nth-child(1) { animation-delay: 0.08s; }
+    .notif-card:nth-child(2) { animation-delay: 0.18s; }
+    .notif-card:nth-child(3) { animation-delay: 0.28s; }
+    .notif-card:nth-child(4) { animation-delay: 0.38s; }
+    .notif-card:nth-child(5) { animation-delay: 0.48s; }
+
+    @keyframes cardSlide {
+      from { opacity: 0; transform: translateX(-22px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* shimmer top stripe on hover */
+    .notif-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #dec795 0%, #284cb8 50%, #dec795 100%);
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 0.3s;
+      animation: shimmerMove 2.5s linear infinite;
+    }
+    @keyframes shimmerMove {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .notif-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.13);
+      background: #cecece;
+    }
+    .notif-card:hover::before { opacity: 1; }
+
+    /* unread left border accent */
+    .notif-card.unread {
+      border-left: 4px solid #284cb8;
+    }
+    .notif-card.read {
+      border-left: 4px solid transparent;
+      opacity: 0.85;
+    }
+
+    /* ── ICON CIRCLE ─────────────────────── */
+    .notif-icon-wrap {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.3s;
+      border: 2px solid rgba(209,201,186,0.5);
+    }
+    .notif-card:hover .notif-icon-wrap {
+      transform: scale(1.08) rotate(-4deg);
+    }
+
+    /* ── TEXT BLOCK ──────────────────────── */
+    .notif-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+    .notif-message {
+      font-size: 20px;
+      font-weight: 500;
+      color: #000;
+      line-height: 1.45;
+    }
+    .notif-message.sub-text {
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(0,0,0,0.45);
+    }
+    .notif-time-inline {
+      font-size: 18px;
+      font-weight: 400;
+      color: #000;
+      margin-top: 2px;
+    }
+
+    /* ── RIGHT TIMESTAMP BLOCK ───────────── */
+    .notif-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+      min-width: 110px;
+    }
+    .notif-time-ago {
+      font-size: 17px;
+      font-weight: 400;
+      color: #000;
+      white-space: nowrap;
+    }
+    .notif-date {
+      font-size: 17px;
+      font-weight: 400;
+      color: #000;
+      white-space: nowrap;
+    }
+
+    /* dismiss button (appears on hover) */
+    .dismiss-btn {
+      position: absolute;
+      top: 12px; right: 14px;
+      background: none; border: none; cursor: pointer;
+      font-size: 16px; color: rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.2s, color 0.2s;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .notif-card:hover .dismiss-btn { opacity: 1; }
+    .dismiss-btn:hover { color: #e53935; background: rgba(229,57,53,0.07); }
+
+    /* ── DISMISSED ANIMATION ─────────────── */
+    .notif-card.dismissed {
+      animation: slideOut 0.4s ease forwards;
+    }
+    @keyframes slideOut {
+      to { opacity: 0; transform: translateX(40px) scale(0.96); max-height: 0; padding: 0; margin: 0; }
+    }
+
+    /* ══════════════════════════════════════
+       EMPTY STATE
+    ══════════════════════════════════════ */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 14px;
+      animation: fadeDown 0.4s ease both;
+    }
+    .empty-state .empty-icon { font-size: 52px; }
+    .empty-state p { font-size: 20px; color: rgba(0,0,0,0.4); }
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #284cb8; color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 500;
+      padding: 12px 26px; border-radius: 30px;
+      box-shadow: 0 6px 24px rgba(40,76,184,0.30);
+      opacity: 0; transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none; z-index: 600; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: #dec795;
+      height: 54px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 30px; font-weight: 500; color: #000;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here" id="searchInput"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <!-- Bell with red badge -->
+      <button class="icon-btn" title="Notifications">
+        🔔
+        <span class="bell-badge"></span>
+      </button>
+      <button class="icon-btn">💬</button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item" href="stu-dashboard.html">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a class="nav-item" href="browse-internship.html">
+          <span class="nav-icon">💼</span> Browse Internship
+        </a>
+        <a class="nav-item" href="my-applications.html">
+          <span class="nav-icon">📄</span> My Applications
+        </a>
+        <a class="nav-item" href="student-analysis.html">
+          <span class="nav-icon">📉</span> Insights
+        </a>
+        <a class="nav-item" href="messages.html">
+          <span class="nav-icon">💬</span> Messages
+        </a>
+        <a class="nav-item" href="my-profile.html">
+          <span class="nav-icon">👤</span> My Profile
+        </a>
+        <a class="nav-item" href="#" id="logout-btn">
+          <span class="nav-icon">🚪</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Notifications</h1>
+        <button class="mark-all-btn" onclick="markAllRead()">Mark all as read</button>
+      </div>
+
+      <!-- notifications list -->
+      <div id="notifList">
+
+        <!-- ── NOTIF 1 : Selected ── -->
+        <div class="notif-card unread" data-id="1">
+          <div class="notif-icon-wrap">
+            <!-- Green tick circle matching Figma -->
+            <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+              <circle cx="21" cy="21" r="19" stroke="#17c425" stroke-width="2.5" fill="none"/>
+              <polyline points="12,22 19,29 31,14" stroke="#17c425" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="notif-body">
+            <p class="notif-message">Congratulations !&nbsp; You have been Selected for<br>Web Development&nbsp; Internship</p>
+            <p class="notif-time-inline">2 hours ago</p>
+          </div>
+          <div class="notif-right">
+            <span class="notif-time-ago">2 hours ago</span>
+            <span class="notif-date">10/01/2026</span>
+          </div>
+          <button class="dismiss-btn" onclick="dismissNotif(this, event)" title="Dismiss">✕</button>
+        </div>
+
+        <!-- ── NOTIF 2 : New Internship Posted ── -->
+        <div class="notif-card unread" data-id="2">
+          <div class="notif-icon-wrap">
+            <!-- Briefcase/bag icon matching Figma -->
+            <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+              <rect x="6" y="13" width="26" height="18" rx="3" stroke="#000" stroke-width="2.2" fill="none"/>
+              <path d="M13 13V10a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v3" stroke="#000" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              <line x1="6" y1="22" x2="32" y2="22" stroke="#000" stroke-width="2" stroke-dasharray="3 2"/>
+              <rect x="16" y="20" width="6" height="4" rx="1" fill="#000" opacity="0.15" stroke="#000" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="notif-body">
+            <p class="notif-message">New Internship Posted : UI/UX&nbsp; Designer<br>( Remote )</p>
+            <p class="notif-time-inline">2 hours ago</p>
+          </div>
+          <div class="notif-right">
+            <span class="notif-time-ago">2 hours ago</span>
+            <span class="notif-date">10/02/2026</span>
+          </div>
+          <button class="dismiss-btn" onclick="dismissNotif(this, event)" title="Dismiss">✕</button>
+        </div>
+
+        <!-- ── NOTIF 3 : Interview Reminder ── -->
+        <div class="notif-card unread" data-id="3">
+          <div class="notif-icon-wrap">
+            <!-- Ringing bell matching Figma yellow bell -->
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <!-- sound waves -->
+              <path d="M5 20 Q8 15 5 10" stroke="#d4a017" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <path d="M3 22 Q7 13 3 7"  stroke="#d4a017" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+              <path d="M35 20 Q32 15 35 10" stroke="#d4a017" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <path d="M37 22 Q33 13 37 7" stroke="#d4a017" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+              <!-- bell body -->
+              <path d="M20 6 C14 6 10 11 10 17 L10 24 L8 26 L32 26 L30 24 L30 17 C30 11 26 6 20 6 Z" fill="#f0b429" stroke="#d4a017" stroke-width="1.5"/>
+              <!-- clapper -->
+              <path d="M17 26 Q20 30 23 26" stroke="#d4a017" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <!-- top knob -->
+              <circle cx="20" cy="6" r="2" fill="#d4a017"/>
+            </svg>
+          </div>
+          <div class="notif-body">
+            <p class="notif-message">Reminder : Interview tommorow for Backend Development internship</p>
+            <p class="notif-time-inline">5 days ago</p>
+          </div>
+          <div class="notif-right">
+            <span class="notif-time-ago">5 days ago</span>
+            <span class="notif-date">05/02/2026</span>
+          </div>
+          <button class="dismiss-btn" onclick="dismissNotif(this, event)" title="Dismiss">✕</button>
+        </div>
+
+        <!-- ── NOTIF 4 : Offer Letter ── -->
+        <div class="notif-card read" data-id="4">
+          <div class="notif-icon-wrap">
+            <!-- Open envelope / offer letter matching Figma -->
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <!-- envelope body -->
+              <rect x="5" y="12" width="30" height="20" rx="3" fill="none" stroke="#000" stroke-width="2"/>
+              <!-- envelope flap open -->
+              <path d="M5 18 L20 8 L35 18" stroke="#000" stroke-width="2" fill="none" stroke-linejoin="round"/>
+              <!-- letter lines sticking out -->
+              <rect x="13" y="4" width="14" height="18" rx="2" fill="#fff" stroke="#000" stroke-width="1.5"/>
+              <line x1="16" y1="9"  x2="24" y2="9"  stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="16" y1="13" x2="24" y2="13" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="16" y1="17" x2="21" y2="17" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="notif-body">
+            <p class="notif-message">Offer letter is available for Download for web Development Internship</p>
+            <p class="notif-time-inline">1 Week ago</p>
+          </div>
+          <div class="notif-right">
+            <span class="notif-time-ago">1 Week ago</span>
+            <span class="notif-date">2/02/2026</span>
+          </div>
+          <button class="dismiss-btn" onclick="dismissNotif(this, event)" title="Dismiss">✕</button>
+        </div>
+
+        <!-- ── NOTIF 5 : Application Submitted ── -->
+        <div class="notif-card read" data-id="5">
+          <div class="notif-icon-wrap">
+            <!-- Clipboard / checklist matching Figma -->
+            <svg width="38" height="42" viewBox="0 0 38 42" fill="none">
+              <!-- clipboard board -->
+              <rect x="4" y="8" width="30" height="30" rx="3" fill="none" stroke="#000" stroke-width="2"/>
+              <!-- clipboard top clip -->
+              <rect x="13" y="4" width="12" height="7" rx="2" fill="none" stroke="#000" stroke-width="2"/>
+              <rect x="15" y="5" width="8" height="4" rx="1" fill="#000" opacity="0.12"/>
+              <!-- lines -->
+              <line x1="10" y1="20" x2="28" y2="20" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+              <line x1="10" y1="27" x2="28" y2="27" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+              <line x1="10" y1="34" x2="20" y2="34" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="notif-body">
+            <p class="notif-message">Application Submitted : Your Application for Digital Marketing Internship</p>
+            <p class="notif-message sub-text">has been submitted successfully</p>
+          </div>
+          <div class="notif-right">
+            <span class="notif-time-ago">2 Weeks ago</span>
+            <span class="notif-date">27/01/2026</span>
+          </div>
+          <button class="dismiss-btn" onclick="dismissNotif(this, event)" title="Dismiss">✕</button>
+        </div>
+
+      </div><!-- /notifList -->
+
+      <!-- Empty state (shown when all dismissed) -->
+      <div class="empty-state" id="emptyState">
+        <span class="empty-icon">🔔</span>
+        <p>You're all caught up! No notifications.</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>© 2026 InternshipHub| All rights reserved</footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+    /* ── DISMISS A NOTIFICATION ──────────────────────────── */
+    function dismissNotif(btn, e) {
+      e.stopPropagation();
+      const card = btn.closest('.notif-card');
+      card.classList.add('dismissed');
+      setTimeout(() => {
+        card.remove();
+        checkEmpty();
+      }, 420);
+    }
+
+    function checkEmpty() {
+      const remaining = document.querySelectorAll('.notif-card:not(.dismissed)').length;
+      if (remaining === 0) {
+        document.getElementById('emptyState').style.display = 'flex';
+        // remove bell badge
+        const badge = document.querySelector('.bell-badge');
+        if (badge) badge.style.display = 'none';
+      }
+    }
+
+    /* ── MARK ALL AS READ ────────────────────────────────── */
+    function markAllRead() {
+      document.querySelectorAll('.notif-card.unread').forEach(card => {
+        card.classList.remove('unread');
+        card.classList.add('read');
+      });
+      const badge = document.querySelector('.bell-badge');
+      if (badge) badge.style.display = 'none';
+      showToast('✅ All notifications marked as read');
+    }
+
+    /* ── CARD CLICK → MARK AS READ ───────────────────────── */
+    document.querySelectorAll('.notif-card').forEach(card => {
+      card.addEventListener('click', function () {
+        if (this.classList.contains('unread')) {
+          this.classList.remove('unread');
+          this.classList.add('read');
+          const unread = document.querySelectorAll('.notif-card.unread').length;
+          if (unread === 0) {
+            const badge = document.querySelector('.bell-badge');
+            if (badge) badge.style.display = 'none';
+          }
+        }
+      });
+    });
+
+    /* ── SEARCH FILTER ───────────────────────────────────── */
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('.notif-card').forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = (!q || text.includes(q)) ? '' : 'none';
+      });
+    });
+
+    /* ── SIDEBAR ACTIVE ──────────────────────────────────── */
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function (e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) {
+            window.location.href = 'stu-dashboard.html';
+          }
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    /* ── TOAST ───────────────────────────────────────────── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+
+</body>
+</html>

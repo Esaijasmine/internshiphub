@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Internship – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════
+       TOP NAV
+    ══════════════════════════════════════ */
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      padding: 0 44px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 32px;
+      color: #000;
+      letter-spacing: -0.5px;
+    }
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .search-wrap { position: relative; width: 260px; }
+    .search-wrap input {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: #1e1e1e;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus {
+      border-color: #284cb8;
+      box-shadow: 0 0 0 3px rgba(40,76,184,0.10);
+    }
+    .search-icon {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px; color: #666; pointer-events: none;
+    }
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 26px; width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.07); transform: scale(1.1); }
+
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .layout { display: flex; flex: 1; }
+
+    /* ══════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════ */
+    .sidebar {
+      width: 338px; min-width: 338px;
+      background: #d9d9d9;
+      padding: 16px 0;
+      min-height: calc(100vh - 100px - 54px);
+    }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 20px;
+      font-size: 28px; font-weight: 400;
+      color: #000; text-decoration: none; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, border-color 0.15s, padding-left 0.2s;
+    }
+    .nav-item:hover { background: rgba(0,0,0,0.06); padding-left: 28px; }
+    .nav-item.active {
+      color: #284cb8;
+      border-left-color: #284cb8;
+      background: rgba(40,76,184,0.05);
+    }
+    .nav-icon {
+      width: 46px; height: 46px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      padding: 0 0 40px 0;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background: rgba(209,201,186,0.22);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(209,201,186,0.5);
+      animation: fadeDown 0.45s ease both;
+      position: sticky;
+      top: 100px;
+      z-index: 100;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .filter-dropdown {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid #c8bfa8;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 400;
+      color: #000;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s, background 0.2s;
+      white-space: nowrap;
+      position: relative;
+    }
+    .filter-dropdown:hover {
+      border-color: #284cb8;
+      box-shadow: 0 3px 10px rgba(40,76,184,0.10);
+      transform: translateY(-1px);
+      background: #faf8f3;
+    }
+    .filter-dropdown.active-filter {
+      background: #284cb8;
+      color: #fff;
+      border-color: #284cb8;
+    }
+    .filter-dropdown .arrow { font-size: 12px; transition: transform 0.2s; display: inline-block; }
+    .filter-dropdown.open .arrow { transform: rotate(180deg); }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      background: #fff;
+      border: 1px solid #d9d9d9;
+      border-radius: 10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      min-width: 180px;
+      z-index: 300;
+      overflow: hidden;
+      animation: dropIn 0.18s ease both;
+    }
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .filter-dropdown.open .dropdown-menu { display: block; }
+    .dropdown-option {
+      padding: 11px 18px;
+      font-size: 16px;
+      font-weight: 400;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .dropdown-option:hover { background: rgba(40,76,184,0.07); color: #284cb8; }
+
+    /* ── INTERNSHIP CARDS ── */
+    .cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 20px 28px;
+      flex: 1;
+    }
+
+    .internship-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid rgba(209,201,186,0.55);
+      padding: 26px 28px 22px 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+      animation: cardSlide 0.5s ease both;
+    }
+    .internship-card:nth-child(1) { animation-delay: 0.10s; }
+    .internship-card:nth-child(2) { animation-delay: 0.22s; }
+    .internship-card:nth-child(3) { animation-delay: 0.34s; }
+    @keyframes cardSlide {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .internship-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #dec795 0%, #284cb8 50%, #dec795 100%);
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 0.3s;
+      animation: shimmerMove 2.5s linear infinite;
+    }
+    @keyframes shimmerMove {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .internship-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.10);
+      border-color: rgba(40,76,184,0.20);
+    }
+    .internship-card:hover::before { opacity: 1; }
+
+    .card-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+    .job-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: #000;
+      transition: color 0.2s;
+    }
+    .internship-card:hover .job-title { color: #284cb8; }
+
+    .company-name {
+      font-size: 20px;
+      font-weight: 400;
+      color: rgba(0,0,0,0.45);
+      margin-bottom: 4px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 18px;
+      font-weight: 400;
+      color: #000;
+    }
+    .meta-icon { font-size: 18px; }
+
+    .tags-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .skill-tag {
+      border: 1px solid #b0b0b0;
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 15px;
+      font-weight: 400;
+      color: #000;
+      background: #fff;
+      cursor: default;
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .internship-card:hover .skill-tag { border-color: rgba(40,76,184,0.3); }
+    .skill-tag:hover { color: #284cb8; border-color: #284cb8; transform: translateY(-1px); }
+
+    .actions-row { display: flex; align-items: center; gap: 14px; }
+
+    .apply-btn {
+      background: #7ecef4;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .apply-btn:hover {
+      background: #5bbfe8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(126,206,244,0.45);
+    }
+
+    .details-btn {
+      background: #fff;
+      border: 1.5px solid #b0b0b0;
+      border-radius: 8px;
+      padding: 11px 26px;
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 400;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s, color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .details-btn:hover {
+      border-color: #284cb8;
+      color: #284cb8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(40,76,184,0.10);
+    }
+
+    .ripple {
+      position: absolute; border-radius: 50%;
+      transform: scale(0);
+      animation: rippleAnim 0.55s linear;
+      background: rgba(255,255,255,0.45);
+      pointer-events: none;
+    }
+    @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+    .company-logo-wrap {
+      flex-shrink: 0;
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(209,201,186,0.6);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .internship-card:hover .company-logo-wrap {
+      transform: scale(1.06) rotate(-2deg);
+      border-color: #dec795;
+    }
+    .company-logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .logo-fallback {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 22px;
+      color: #fff;
+    }
+
+    /* ══════════════════════════════════════
+       APPLY MODAL
+    ══════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.38);
+      z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      background: #fff;
+      border-radius: 16px;
+      width: 500px; max-width: 94vw;
+      padding: 36px 36px 32px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      animation: modalPop 0.25s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #dec795 0%, #7ecef4 50%, #dec795 100%);
+      background-size: 200% 100%;
+      border-radius: 16px 16px 0 0;
+      animation: shimmerMove 2.5s linear infinite;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 16px;
+      background: rgba(229,57,53,0.08); border: none;
+      border-radius: 50%; width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: #e53935; cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .modal-close:hover { background: rgba(229,57,53,0.18); transform: rotate(90deg) scale(1.1); }
+    .modal-title { font-size: 22px; font-weight: 700; color: #000; margin-bottom: 6px; }
+    .modal-company { font-size: 16px; color: rgba(0,0,0,0.45); margin-bottom: 22px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; color: #555; margin-bottom: 5px; }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid #d9d9d9; border-radius: 8px;
+      font-family: 'Inter', sans-serif; font-size: 15px; color: #000;
+      outline: none; resize: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: #284cb8;
+      box-shadow: 0 0 0 3px rgba(40,76,184,0.10);
+    }
+    .submit-btn {
+      width: 100%; padding: 12px;
+      background: #7ecef4; color: #000;
+      border: none; border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; margin-top: 6px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .submit-btn:hover {
+      background: #5bbfe8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(126,206,244,0.4);
+    }
+
+    /* toast */
+    .toast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #284cb8; color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 500;
+      padding: 12px 26px; border-radius: 30px;
+      box-shadow: 0 6px 24px rgba(40,76,184,0.30);
+      opacity: 0; transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none; z-index: 600; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .internship-card.hidden { display: none; }
+
+    /* ══════════════════════════════════════
+       VIEW DETAILS FD MODAL  (Figma design)
+    ══════════════════════════════════════ */
+    .fd-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 600;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .fd-overlay.open { display: flex; }
+
+    /* close X — fixed top-right of screen like Figma */
+    .fd-close-x {
+      position: fixed;
+      top: 22px; right: 28px;
+      background: none; border: none;
+      font-size: 30px; font-weight: 700;
+      color: #e53935; cursor: pointer;
+      z-index: 700;
+      line-height: 1;
+      transition: transform 0.2s ease, color 0.2s;
+    }
+    .fd-close-x:hover { transform: scale(1.2) rotate(10deg); color: #b71c1c; }
+
+    .fd-card {
+      background: #faf6ea;
+      border-radius: 20px;
+      padding: 36px 44px 40px;
+      max-width: 580px;
+      width: 100%;
+      position: relative;
+      animation: fdSlideUp 0.4s cubic-bezier(0.23,1,0.32,1) both;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.13);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    @keyframes fdSlideUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .fd-card-title {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a56e8;
+      margin-bottom: 22px;
+    }
+
+    .fd-avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .fd-avatar {
+      width: 112px; height: 112px;
+      border-radius: 50%;
+      border: 3px solid #e0d9c8;
+      background: linear-gradient(135deg,#c9d6ff,#e2e2e2);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+      font-size: 56px;
+    }
+
+    .fd-job-title {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px; font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+    .fd-company {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px; color: #9e9e9e;
+      font-weight: 400; margin-bottom: 22px;
+    }
+
+    .fd-meta-row {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .fd-meta-item {
+      display: flex; align-items: center; gap: 7px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px; font-weight: 600; color: #1a1a1a;
+    }
+    .fd-meta-item .em { font-size: 20px; }
+
+    .fd-divider {
+      border: none;
+      border-top: 1px solid #e8e0cc;
+      margin: 0 0 20px;
+    }
+
+    .fd-section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px; font-weight: 700;
+      color: #1a56e8;
+      margin-bottom: 12px;
+    }
+
+    .fd-resp ul {
+      list-style: disc;
+      padding-left: 22px;
+      margin-bottom: 14px;
+    }
+    .fd-resp ul li {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px; color: #1a1a1a;
+      margin-bottom: 6px; line-height: 1.5;
+    }
+    .fd-resp .fd-desc {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px; color: #1a1a1a;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .fd-skills-section { text-align: center; }
+    .fd-skills-section .fd-section-title { text-align: center; }
+    .fd-skills-wrap {
+      display: flex; flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 4px;
+    }
+    .fd-skill-chip {
+      border: 1.5px solid #aaa;
+      border-radius: 50px;
+      padding: 6px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 500;
+      color: #333; background: transparent;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+      cursor: default;
+    }
+    .fd-skill-chip:hover {
+      background: #1a56e8; color: #fff;
+      border-color: #1a56e8;
+      transform: translateY(-2px);
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: #dec795;
+      height: 54px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 30px; font-weight: 500; color: #000;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here" id="searchInput"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="icon-btn">🔔</button>
+      <button class="icon-btn">💬</button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item" href="stu-dashboard.html">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a class="nav-item active" href="#">
+          <span class="nav-icon">💼</span> Browse Internship
+        </a>
+        <a class="nav-item" href="my-applications.html">
+          <span class="nav-icon">📄</span> My Applications
+        </a>
+        <a class="nav-item" href="student-analysis.html">
+          <span class="nav-icon">📉</span> Insights
+        </a>
+        <a class="nav-item" href="messages.html">
+          <span class="nav-icon">💬</span> Messages
+        </a>
+        <a class="nav-item" href="my-profile.html">
+          <span class="nav-icon">👤</span> My Profile
+        </a>
+        <a class="nav-item" href="#" id="logout-btn">
+          <span class="nav-icon">🚪</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-dropdown" data-filter="location">
+          Location <span class="arrow">▾</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-option" onclick="applyFilter('location','Chennai')">Chennai</div>
+            <div class="dropdown-option" onclick="applyFilter('location','Bangalore')">Bangalore</div>
+            <div class="dropdown-option" onclick="applyFilter('location','Hyderabad')">Hyderabad</div>
+            <div class="dropdown-option" onclick="applyFilter('location','All')">All</div>
+          </div>
+        </div>
+
+        <div class="filter-dropdown" data-filter="type">
+          Internship Type <span class="arrow">▾</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-option" onclick="applyFilter('type','Remote')">Remote</div>
+            <div class="dropdown-option" onclick="applyFilter('type','On-site')">On-site</div>
+            <div class="dropdown-option" onclick="applyFilter('type','Hybrid')">Hybrid</div>
+            <div class="dropdown-option" onclick="applyFilter('type','All')">All</div>
+          </div>
+        </div>
+
+        <div class="filter-dropdown" data-filter="duration">
+          Duration <span class="arrow">▾</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-option" onclick="applyFilter('duration','3 Months')">3 Months</div>
+            <div class="dropdown-option" onclick="applyFilter('duration','4 Months')">4 Months</div>
+            <div class="dropdown-option" onclick="applyFilter('duration','6 Months')">6 Months</div>
+            <div class="dropdown-option" onclick="applyFilter('duration','All')">All</div>
+          </div>
+        </div>
+
+        <div class="filter-dropdown" data-filter="industry">
+          Industry <span class="arrow">▾</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-option" onclick="applyFilter('industry','Tech')">Tech</div>
+            <div class="dropdown-option" onclick="applyFilter('industry','Design')">Design</div>
+            <div class="dropdown-option" onclick="applyFilter('industry','Analytics')">Analytics</div>
+            <div class="dropdown-option" onclick="applyFilter('industry','All')">All</div>
+          </div>
+        </div>
+
+        <div class="filter-dropdown" data-filter="stipend">
+          Stippend <span class="arrow">▾</span>
+          <div class="dropdown-menu">
+            <div class="dropdown-option" onclick="applyFilter('stipend','5000')">₹5,000</div>
+            <div class="dropdown-option" onclick="applyFilter('stipend','10000')">₹10,000</div>
+            <div class="dropdown-option" onclick="applyFilter('stipend','15000')">₹15,000</div>
+            <div class="dropdown-option" onclick="applyFilter('stipend','All')">All</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERNSHIP CARDS -->
+      <div class="cards-list" id="cardsList">
+
+        <!-- Card 1: Frontend Developer -->
+        <div class="internship-card"
+             data-location="Chennai"
+             data-duration="3 Months"
+             data-stipend="5000"
+             data-industry="Tech"
+             data-title="Frontend Developer Intern"
+             data-company="ABC Technologies Pvt Ltd."
+             data-skills="HTML, CSS, JAVA SCRIPT"
+             data-type="fd">
+
+          <div class="card-content">
+            <p class="job-title">Frontend Developer Intern</p>
+            <p class="company-name">ABC Technologies Pvt Ltd.</p>
+            <div class="meta-row">
+              <span class="meta-item"><span class="meta-icon">📍</span> Chennai</span>
+              <span class="meta-item"><span class="meta-icon">⏳</span> 3 Months</span>
+              <span class="meta-item"><span class="meta-icon">💰</span> ₹ 5,000</span>
+            </div>
+            <div class="tags-row">
+              <span class="skill-tag">HTML</span>
+              <span class="skill-tag">CSS</span>
+              <span class="skill-tag">JAVA SCRIPT</span>
+            </div>
+            <div class="actions-row">
+              <button class="apply-btn"   onclick="openApply(this, event)">Apply Now</button>
+              <button class="details-btn" onclick="openFDDetails(event)">View Details</button>
+            </div>
+          </div>
+
+          <div class="company-logo-wrap">
+            <div class="logo-fallback" style="background:linear-gradient(135deg,#0a1a4e,#162d7a);">
+              <svg width="70" height="34" viewBox="0 0 70 34" fill="none">
+                <text x="2" y="26" font-family="Poppins,sans-serif" font-weight="700" font-size="28">
+                  <tspan fill="#f7c948">a</tspan><tspan fill="#34c759">b</tspan><tspan fill="#e53935">c</tspan>
+                </text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: UI/UX Designer -->
+        <div class="internship-card"
+             data-location="Bangalore"
+             data-duration="4 Months"
+             data-stipend="10000"
+             data-industry="Design"
+             data-title="UI/UX Designer Intern"
+             data-company="Creative Minds Studio Pvt Ltd."
+             data-skills="Figma, Adobe XD, Wireframing"
+             data-type="ux">
+
+          <div class="card-content">
+            <p class="job-title">UI/UX Designer Intern</p>
+            <p class="company-name">Creative Minds Studio Pvt Ltd.</p>
+            <div class="meta-row">
+              <span class="meta-item"><span class="meta-icon">📍</span> Bangalore</span>
+              <span class="meta-item"><span class="meta-icon">⏳</span> 4 Months</span>
+              <span class="meta-item"><span class="meta-icon">💰</span> ₹10,000</span>
+            </div>
+            <div class="tags-row">
+              <span class="skill-tag">Figma</span>
+              <span class="skill-tag">Adobe XD</span>
+              <span class="skill-tag">Wireframing</span>
+            </div>
+            <div class="actions-row">
+              <button class="apply-btn"   onclick="openApply(this, event)">Apply Now</button>
+              <button class="details-btn" onclick="openUXDetails(event)">View Details</button>
+            </div>
+          </div>
+
+          <div class="company-logo-wrap" style="background:#f0e8e8;">
+            <div class="logo-fallback" style="background:linear-gradient(135deg,#f5c6d0,#c5d5f5,#f5e6c5);font-size:14px;color:#333;font-weight:700;text-align:center;padding:6px;line-height:1.3;">
+              🎨<br><span style="font-size:10px;">Creative<br>Minds</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Data Analytics -->
+        <div class="internship-card"
+             data-location="Hyderabad"
+             data-duration="6 Months"
+             data-stipend="15000"
+             data-industry="Analytics"
+             data-title="Data Analytics Intern"
+             data-company="Insight Analytics Solutions"
+             data-skills="Python, SQL, Data Visualization"
+             data-type="da">
+
+          <div class="card-content">
+            <p class="job-title">Data Analytics Intern</p>
+            <p class="company-name">Insight Analytics Solutions</p>
+            <div class="meta-row">
+              <span class="meta-item"><span class="meta-icon">📍</span> Hyderabad</span>
+              <span class="meta-item"><span class="meta-icon">⏳</span> 6 Months</span>
+              <span class="meta-item"><span class="meta-icon">💰</span> ₹15,000</span>
+            </div>
+            <div class="tags-row">
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">SQL</span>
+              <span class="skill-tag">Data Visualization</span>
+            </div>
+            <div class="actions-row">
+              <button class="apply-btn"   onclick="openApply(this, event)">Apply Now</button>
+              <button class="details-btn" onclick="openDADetails(event)">View Details</button>
+            </div>
+          </div>
+
+          <div class="company-logo-wrap">
+            <div class="logo-fallback" style="background:linear-gradient(135deg,#0a1a3e,#1a2f5e);flex-direction:column;gap:2px;">
+              <span style="font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">Insight</span>
+              <div style="width:36px;height:3px;background:linear-gradient(90deg,#f97316,#facc15);border-radius:2px;"></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /cards-list -->
+    </main>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>© 2026 InternshipHub | All rights reserved</footer>
+
+
+  <!-- ═══ APPLY MODAL ═══ -->
+  <div class="modal-overlay" id="applyModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('applyModal')">✕</button>
+      <p class="modal-title" id="applyTitle">Apply for Internship</p>
+      <p class="modal-company" id="applyCompany"></p>
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="applicantName" placeholder="Jasmine S"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="applicantEmail" placeholder="jasmine@gmail.com"/>
+      </div>
+      <div class="form-group">
+        <label>Why are you a good fit?</label>
+        <textarea rows="3" id="applicantReason" placeholder="Write a short note..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitApplication()">Submit Application</button>
+    </div>
+  </div>
+
+  <!-- ═══ GENERIC DETAILS MODAL (for other cards) ═══ -->
+  <div class="modal-overlay" id="detailsModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('detailsModal')">✕</button>
+      <p class="modal-title" id="detailsTitle"></p>
+      <p class="modal-company" id="detailsCompany"></p>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px;">
+        <div style="display:flex;gap:10px;font-size:16px;"><span style="min-width:110px;color:#555;font-weight:500;">Location:</span><span id="detailsLocation"></span></div>
+        <div style="display:flex;gap:10px;font-size:16px;"><span style="min-width:110px;color:#555;font-weight:500;">Duration:</span><span id="detailsDuration"></span></div>
+        <div style="display:flex;gap:10px;font-size:16px;"><span style="min-width:110px;color:#555;font-weight:500;">Stipend:</span><span id="detailsStipend"></span></div>
+        <div style="display:flex;gap:10px;font-size:16px;"><span style="min-width:110px;color:#555;font-weight:500;">Skills:</span><span id="detailsSkills"></span></div>
+      </div>
+      <button class="submit-btn" style="margin-top:22px;" onclick="closeModal('detailsModal');openApplyFromDetails()">Apply Now</button>
+    </div>
+  </div>
+
+  <!-- ═══ FD VIEW DETAILS MODAL (Figma Design) ═══ -->
+  <div class="fd-overlay" id="fdModal">
+
+    <!-- Red X close button — top right of screen -->
+    <button class="fd-close-x" id="fdCloseBtn" onclick="closeFDModal()">&#10005;</button>
+
+    <div class="fd-card" id="fdCard">
+
+      <div class="fd-card-title">View Details</div>
+
+      <div class="fd-avatar-wrap">
+        <div class="fd-avatar">👨‍💻</div>
+      </div>
+
+      <div class="fd-job-title">Frontend Developer Intern</div>
+      <div class="fd-company">ABC Technologies Pvt Ltd.</div>
+
+      <div class="fd-meta-row">
+        <div class="fd-meta-item"><span class="em">📍</span> Chennai</div>
+        <div class="fd-meta-item"><span class="em">⏳</span> 3 Months</div>
+        <div class="fd-meta-item"><span class="em">💰</span> ₹12,000/Month</div>
+      </div>
+
+      <hr class="fd-divider"/>
+
+      <div class="fd-resp">
+        <div class="fd-section-title">Responsibilities</div>
+        <ul>
+          <li>Develop responsive web pages</li>
+          <li>Optimize UI performance</li>
+          <li>Collaborate with backend team</li>
+          <li>Maintain code quality standards</li>
+        </ul>
+        <p class="fd-desc">Collaborate with UI teams to build responsive and<br>scalable web applications.</p>
+      </div>
+
+      <hr class="fd-divider"/>
+
+      <div class="fd-skills-section">
+        <div class="fd-section-title">Skills Required</div>
+        <div class="fd-skills-wrap">
+          <span class="fd-skill-chip">HTML</span>
+          <span class="fd-skill-chip">CSS</span>
+          <span class="fd-skill-chip">JAVA SCRIPT</span>
+          <span class="fd-skill-chip">Responsive Design</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ UX VIEW DETAILS MODAL ═══ -->
+  <div class="fd-overlay" id="uxModal">
+    <button class="fd-close-x" onclick="closeCustomModal('uxModal')">&#10005;</button>
+    <div class="fd-card" id="uxCard">
+      <div class="fd-card-title">View Details</div>
+      <div class="fd-avatar-wrap">
+        <div class="fd-avatar" style="background:linear-gradient(135deg,#1a2a6c,#2a4a9c,#1565c0); font-size:52px;">🎨</div>
+      </div>
+      <div class="fd-job-title">UI/UX Designer Intern</div>
+      <div class="fd-company">Creative Minds Studio Pvt Ltd</div>
+      <div class="fd-meta-row">
+        <div class="fd-meta-item"><span class="em">📍</span> Bangalore</div>
+        <div class="fd-meta-item"><span class="em">⏳</span> 10 Months</div>
+        <div class="fd-meta-item"><span class="em">💰</span> ₹10,000/Month</div>
+      </div>
+      <hr class="fd-divider"/>
+      <div class="fd-resp">
+        <div class="fd-section-title">Responsibilities</div>
+        <ul>
+          <li>Create wireframes, prototypes, and mockups</li>
+          <li>Conduct user research and usability testing</li>
+          <li>Improve existing UI based on feedback</li>
+          <li>Maintain design consistency across platforms</li>
+        </ul>
+        <p class="fd-desc">Assist in designing intuitive user interfaces and improving user<br>experience for web and mobile applications.</p>
+      </div>
+      <hr class="fd-divider"/>
+      <div class="fd-skills-section">
+        <div class="fd-section-title">Skills Required</div>
+        <div class="fd-skills-wrap">
+          <span class="fd-skill-chip">Figma</span>
+          <span class="fd-skill-chip">Adobe XD</span>
+          <span class="fd-skill-chip">User Research</span>
+          <span class="fd-skill-chip">UI Design</span>
+          <span class="fd-skill-chip">UX Principles</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DA VIEW DETAILS MODAL ═══ -->
+  <div class="fd-overlay" id="daModal">
+    <button class="fd-close-x" onclick="closeCustomModal('daModal')">&#10005;</button>
+    <div class="fd-card" id="daCard">
+      <div class="fd-card-title">View Details</div>
+      <div class="fd-avatar-wrap">
+        <div class="fd-avatar" style="background:linear-gradient(135deg,#0a1a3e,#1a2f5e); font-size:52px;">📊</div>
+      </div>
+      <div class="fd-job-title">Data Analytics Intern</div>
+      <div class="fd-company">Insight Analytics Solutions</div>
+      <div class="fd-meta-row">
+        <div class="fd-meta-item"><span class="em">📍</span> Hyderabad</div>
+        <div class="fd-meta-item"><span class="em">⏳</span> 6 Months</div>
+        <div class="fd-meta-item"><span class="em">💰</span> ₹15,000/Month</div>
+      </div>
+      <hr class="fd-divider"/>
+      <div class="fd-resp">
+        <div class="fd-section-title">Responsibilities</div>
+        <ul>
+          <li>Analyze large datasets to extract insights</li>
+          <li>Build dashboards and visual reports</li>
+          <li>Collaborate with business teams on KPIs</li>
+          <li>Maintain and clean data pipelines</li>
+        </ul>
+        <p class="fd-desc">Work with data teams to derive actionable insights and<br>support data-driven decision making.</p>
+      </div>
+      <hr class="fd-divider"/>
+      <div class="fd-skills-section">
+        <div class="fd-section-title">Skills Required</div>
+        <div class="fd-skills-wrap">
+          <span class="fd-skill-chip">Python</span>
+          <span class="fd-skill-chip">SQL</span>
+          <span class="fd-skill-chip">Data Visualization</span>
+          <span class="fd-skill-chip">Excel</span>
+          <span class="fd-skill-chip">Power BI</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+    let currentCard = null;
+
+    /* ── OPEN / CLOSE FIGMA-STYLE MODALS ────────────────── */
+    function openCustomModal(overlayId, cardId, e) {
+      if (e) e.stopPropagation();
+      const overlay = document.getElementById(overlayId);
+      const card    = document.getElementById(cardId);
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      card.style.animation = 'none';
+      card.offsetHeight;
+      card.style.animation = '';
+    }
+
+    function closeCustomModal(overlayId) {
+      const overlay = document.getElementById(overlayId);
+      const card    = overlay.querySelector('.fd-card');
+      card.style.transition = 'opacity 0.25s, transform 0.25s';
+      card.style.opacity    = '0';
+      card.style.transform  = 'translateY(30px) scale(0.97)';
+      setTimeout(() => {
+        overlay.classList.remove('open');
+        card.style.opacity    = '';
+        card.style.transform  = '';
+        card.style.transition = '';
+        document.body.style.overflow = '';
+      }, 270);
+    }
+
+    function openFDDetails(e) { openCustomModal('fdModal', 'fdCard', e); }
+    function openUXDetails(e) { openCustomModal('uxModal', 'uxCard', e); }
+    function openDADetails(e) { openCustomModal('daModal', 'daCard', e); }
+
+    // Close on backdrop click for all fd-overlay modals
+    document.querySelectorAll('.fd-overlay').forEach(ov => {
+      ov.addEventListener('click', function(e) {
+        if (e.target === this) closeCustomModal(this.id);
+      });
+    });
+
+    /* ── OPEN APPLY MODAL ────────────────────────────────── */
+    function openApply(btn, e) {
+      e.stopPropagation();
+      addRipple(btn, e);
+      currentCard = btn.closest('.internship-card');
+      document.getElementById('applyTitle').textContent   = currentCard.dataset.title;
+      document.getElementById('applyCompany').textContent = currentCard.dataset.company;
+      document.getElementById('applyModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function openApplyFromDetails() {
+      document.getElementById('applyTitle').textContent   = currentCard.dataset.title;
+      document.getElementById('applyCompany').textContent = currentCard.dataset.company;
+      document.getElementById('applyModal').classList.add('open');
+    }
+
+    /* ── OPEN GENERIC DETAILS MODAL ─────────────────────── */
+    function openDetails(btn, e) {
+      e.stopPropagation();
+      addRipple(btn, e);
+      const card = btn.closest('.internship-card');
+      currentCard = card;
+      document.getElementById('detailsTitle').textContent    = card.dataset.title;
+      document.getElementById('detailsCompany').textContent  = card.dataset.company;
+      document.getElementById('detailsLocation').textContent = card.dataset.location;
+      document.getElementById('detailsDuration').textContent = card.dataset.duration;
+      document.getElementById('detailsStipend').textContent  = '₹' + Number(card.dataset.stipend).toLocaleString('en-IN');
+      document.getElementById('detailsSkills').textContent   = card.dataset.skills;
+      document.getElementById('detailsModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    /* ── SUBMIT APPLICATION ──────────────────────────────── */
+    function submitApplication() {
+      const name  = document.getElementById('applicantName').value.trim();
+      const email = document.getElementById('applicantEmail').value.trim();
+      if (!name || !email) { showToast('⚠️ Please fill in your name and email.'); return; }
+      closeModal('applyModal');
+      showToast('✅ Application submitted successfully!');
+      document.getElementById('applicantName').value   = '';
+      document.getElementById('applicantEmail').value  = '';
+      document.getElementById('applicantReason').value = '';
+    }
+
+    /* ── CLOSE GENERIC MODAL ─────────────────────────────── */
+    function closeModal(id) {
+      const overlay = document.getElementById(id);
+      const mc      = overlay.querySelector('.modal-card');
+      mc.style.transition = 'opacity 0.25s, transform 0.25s';
+      mc.style.opacity    = '0';
+      mc.style.transform  = 'scale(0.93) translateY(14px)';
+      setTimeout(() => {
+        overlay.classList.remove('open');
+        mc.style.opacity = ''; mc.style.transform = '';
+        document.body.style.overflow = '';
+      }, 260);
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(ov => {
+      ov.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        const openFD = document.querySelector('.fd-overlay.open');
+        if (openFD) { closeCustomModal(openFD.id); return; }
+        document.querySelectorAll('.modal-overlay.open').forEach(ov => closeModal(ov.id));
+      }
+    });
+
+    /* ── FILTER DROPDOWNS ────────────────────────────────── */
+    document.querySelectorAll('.filter-dropdown').forEach(dd => {
+      dd.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.querySelectorAll('.filter-dropdown').forEach(d => { if (d !== this) d.classList.remove('open'); });
+        this.classList.toggle('open');
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
+    });
+
+    function applyFilter(type, value) {
+      document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
+      const cards = document.querySelectorAll('.internship-card');
+      cards.forEach(card => {
+        if (value === 'All') { card.classList.remove('hidden'); return; }
+        const map = { location:'location', duration:'duration', stipend:'stipend', industry:'industry', type:'type' };
+        const attr = card.dataset[map[type]] || '';
+        card.classList.toggle('hidden', !attr.toLowerCase().includes(value.toLowerCase()));
+      });
+      showToast(`🔍 Filtered by ${type}: ${value}`);
+    }
+
+    /* ── SEARCH ──────────────────────────────────────────── */
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('.internship-card').forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.classList.toggle('hidden', q !== '' && !text.includes(q));
+      });
+    });
+
+    /* ── CARD CLICK → OPEN APPROPRIATE DETAILS ───────────── */
+    document.querySelectorAll('.internship-card').forEach(card => {
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('button')) return;
+        const t = this.dataset.type;
+        if      (t === 'fd') openFDDetails(e);
+        else if (t === 'ux') openUXDetails(e);
+        else if (t === 'da') openDADetails(e);
+        else {
+          const btn = this.querySelector('.details-btn');
+          openDetails(btn, { stopPropagation: ()=>{}, clientX: 0, clientY: 0 });
+        }
+      });
+    });
+
+    /* ── RIPPLE ──────────────────────────────────────────── */
+    function addRipple(el, e) {
+      const r    = document.createElement('span');
+      r.classList.add('ripple');
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${size}px;height:${size}px;
+        left:${(e.clientX||0) - rect.left - size/2}px;
+        top:${(e.clientY||0)  - rect.top  - size/2}px`;
+      el.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    }
+
+    /* ── TOAST ───────────────────────────────────────────── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    /* ── SIDEBAR ACTIVE ──────────────────────────────────── */
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) window.location.href = 'stu-dashboard.html';
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

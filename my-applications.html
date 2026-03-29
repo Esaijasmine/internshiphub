@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Applications – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════
+       TOP NAV
+    ══════════════════════════════════════ */
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      padding: 0 44px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 32px;
+      color: #000;
+      letter-spacing: -0.5px;
+    }
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .search-wrap {
+      position: relative;
+      width: 260px;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: #1e1e1e;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus {
+      border-color: #284cb8;
+      box-shadow: 0 0 0 3px rgba(40,76,184,0.1);
+    }
+    .search-icon {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px;
+      color: #666;
+      pointer-events: none;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 26px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.06); }
+
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .layout {
+      display: flex;
+      flex: 1;
+    }
+
+    /* ══════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════ */
+    .sidebar {
+      width: 338px;
+      min-width: 338px;
+      background: #d9d9d9;
+      padding: 16px 0;
+      min-height: calc(100vh - 100px - 54px);
+    }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      font-size: 28px;
+      font-weight: 400;
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, border-color 0.15s, padding-left 0.15s;
+    }
+    .nav-item:hover {
+      background: rgba(0,0,0,0.06);
+      padding-left: 26px;
+    }
+    .nav-item.active {
+      color: #284cb8;
+      border-left-color: #284cb8;
+      background: rgba(40,76,184,0.05);
+    }
+    .nav-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      padding: 36px 32px 40px 32px;
+      background: #fff;
+    }
+
+    /* Page title */
+    .page-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 40px;
+      color: #000;
+      margin-bottom: 28px;
+      animation: fadeSlideDown 0.5s ease both;
+    }
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FILTER TABS ──────────────────────── */
+    .filter-tabs {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      animation: fadeSlideDown 0.5s 0.1s ease both;
+    }
+    .filter-tab {
+      background: #fcf4f4;
+      border: none;
+      border-radius: 25.5px;
+      padding: 12px 28px;
+      font-family: 'Inter', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #000;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .filter-tab::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .filter-tab:hover {
+      background: #f5e8e8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .filter-tab.active {
+      background: #dec795;
+      color: #000;
+      box-shadow: 0 4px 14px rgba(222,199,149,0.5);
+      font-weight: 600;
+    }
+
+    /* ── APPLICATION CARDS GRID ───────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 318px);
+      gap: 32px;
+    }
+
+    /* individual card */
+    .app-card {
+      background: rgba(209,201,186,0.2);
+      border-radius: 10px;
+      padding: 28px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s, box-shadow 0.25s;
+      animation: cardRise 0.5s ease both;
+    }
+    .app-card:nth-child(1) { animation-delay: 0.15s; }
+    .app-card:nth-child(2) { animation-delay: 0.28s; }
+    .app-card:nth-child(3) { animation-delay: 0.41s; }
+
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #dec795, #ccc2dc, #dec795);
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 0.3s;
+      animation: shimmerLine 2.5s linear infinite;
+    }
+    @keyframes shimmerLine {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .app-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+    }
+    .app-card:hover::before { opacity: 1; }
+
+    /* Company logo circle */
+    .company-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    }
+    .app-card:hover .company-logo {
+      transform: scale(1.05) rotate(-2deg);
+    }
+
+    /* Card text */
+    .card-role {
+      font-size: 28px;
+      font-weight: 400;
+      color: #000;
+      text-align: center;
+      margin-bottom: 12px;
+      white-space: nowrap;
+    }
+    .card-company {
+      font-size: 24px;
+      font-weight: 400;
+      color: #000;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .card-date {
+      font-size: 24px;
+      font-weight: 500;
+      color: #000;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .card-time {
+      font-size: 20px;
+      font-weight: 400;
+      color: rgba(0,0,0,0.49);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* ── CHIPS ─────────────────────────────── */
+    .chip-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 6px 18px;
+      font-size: 20px;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.1px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      min-width: 110px;
+    }
+    .chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    }
+    .chip-shortlisted {
+      border: 1px solid #ccc2dc;
+      color: #34c759;
+    }
+    .chip-rejected {
+      border: 1px solid #dec795;
+      color: #fd4545;
+    }
+    .chip-pending {
+      border: 1px solid #dec795;
+      color: #4832b5;
+    }
+    .chip-view {
+      border: 1px solid #c594f6;
+      color: #4f378a;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: #dec795;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 30px;
+      font-weight: 500;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       RIPPLE EFFECT ON CHIPS
+    ══════════════════════════════════════ */
+    .chip { position: relative; overflow: hidden; }
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: rippleAnim 0.5s linear;
+      background: rgba(255,255,255,0.45);
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ══════════════════════════════════════
+       HIDDEN CARD (for filter)
+    ══════════════════════════════════════ */
+    .app-card.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here" id="searchInput"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="icon-btn" title="Notifications">🔔</button>
+      <button class="icon-btn" title="Messages">💬</button>
+      <button class="icon-btn" title="Account">👤</button>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item" href="stu-dashboard.html">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">💼</span> Browse Internship
+        </a>
+        <a class="nav-item active" href="#">
+          <span class="nav-icon">📄</span> My Applications
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">📉</span> Insights
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">💬</span> Messages
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-icon">👤</span> My Profile
+        </a>
+        <a class="nav-item" href="#" id="logout-btn">
+          <span class="nav-icon">🚪</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- Page Title -->
+      <h1 class="page-title">My Application</h1>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="pending">Pending</button>
+        <button class="filter-tab" data-filter="shortlisted">Shortlisted</button>
+        <button class="filter-tab" data-filter="rejected">Rejected</button>
+      </div>
+
+      <!-- Application Cards -->
+      <div class="cards-grid" id="cardsGrid">
+
+        <!-- Card 1: Web Development – Shortlisted -->
+        <div class="app-card" data-status="shortlisted">
+          <img class="company-logo"
+               src="https://www.figma.com/api/mcp/asset/7b18e316-67a3-40e5-9313-42362e702005"
+               alt="Tech Corp logo"/>
+          <p class="card-role">Web Development</p>
+          <p class="card-company">Tech Corp</p>
+          <p class="card-date">Jan 20,2026</p>
+          <p class="card-time">5:00  PM</p>
+          <div class="chip-row">
+            <button class="chip chip-shortlisted">Shortlisted</button>
+            <button class="chip chip-view" onclick="alert('Viewing details for Web Development...')">View Details</button>
+          </div>
+        </div>
+
+        <!-- Card 2: Digital Marketing – Rejected -->
+        <div class="app-card" data-status="rejected">
+          <img class="company-logo"
+               src="https://www.figma.com/api/mcp/asset/03d66651-8f60-42e4-8ba7-9b6061909184"
+               alt="Marketify logo"/>
+          <p class="card-role">Digital Marketing</p>
+          <p class="card-company">Marketify</p>
+          <p class="card-date">Jan 20,2026</p>
+          <p class="card-time">11:00  AM</p>
+          <div class="chip-row">
+            <button class="chip chip-rejected">Rejected</button>
+            <button class="chip chip-view" onclick="alert('Viewing details for Digital Marketing...')">View Details</button>
+          </div>
+        </div>
+
+        <!-- Card 3: UI/UX Designer – Pending -->
+        <div class="app-card" data-status="pending">
+          <img class="company-logo"
+               src="https://www.figma.com/api/mcp/asset/f9b9b77e-e5a6-42ed-9639-d66114557902"
+               alt="Creative Minds logo"/>
+          <p class="card-role">UI/UX Designer</p>
+          <p class="card-company">Creative Minds</p>
+          <p class="card-date">Jan 20,2026</p>
+          <p class="card-time">2:10  PM</p>
+          <div class="chip-row">
+            <button class="chip chip-pending">Pending</button>
+            <button class="chip chip-view" onclick="alert('Viewing details for UI/UX Designer...')">View Details</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>© 2026 InternshipHub| All rights reserved</footer>
+
+
+  <script>
+    /* ── FILTER TABS ─────────────────────────────────────── */
+    const filterBtns = document.querySelectorAll('.filter-tab');
+    const cards      = document.querySelectorAll('.app-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        // active state
+        filterBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const filter = this.dataset.filter;
+
+        cards.forEach(card => {
+          const status = card.dataset.status;
+          const show   = filter === 'all' || status === filter;
+
+          if (show) {
+            card.classList.remove('hidden');
+            // re-trigger entrance animation
+            card.style.animation = 'none';
+            card.offsetHeight;   // reflow
+            card.style.animation = '';
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    /* ── RIPPLE ON CHIPS ─────────────────────────────────── */
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', function (e) {
+        const r = document.createElement('span');
+        r.classList.add('ripple');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        r.style.width = r.style.height = size + 'px';
+        r.style.left  = (e.clientX - rect.left - size / 2) + 'px';
+        r.style.top   = (e.clientY - rect.top  - size / 2) + 'px';
+        this.appendChild(r);
+        setTimeout(() => r.remove(), 600);
+      });
+    });
+
+    /* ── SIDEBAR ACTIVE ──────────────────────────────────── */
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function (e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) {
+            window.location.href = 'stu-dashboard.html';
+          }
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    /* ── SEARCH ──────────────────────────────────────────── */
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.classList.toggle('hidden', q !== '' && !text.includes(q));
+      });
+    });
+  </script>
+</body>
+</html>

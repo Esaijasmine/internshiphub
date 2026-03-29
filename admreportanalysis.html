@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Report Analysis – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex; align-items: center;
+      padding: 0 44px; flex-shrink: 0;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      gap: 12px;
+    }
+    .logo { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 32px; color: #000; letter-spacing: -0.5px; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+    .search-wrap { position: relative; width: 260px; }
+    .search-wrap input {
+      width: 100%; padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9; border-radius: 8px;
+      background: #fff; font-family: 'Inter', sans-serif;
+      font-size: 16px; color: #1e1e1e; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus { border-color: #284cb8; box-shadow: 0 0 0 3px rgba(40,76,184,0.10); }
+    .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 17px; color: #666; pointer-events: none; }
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 26px; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; }
+    .icon-btn:hover { background: rgba(0,0,0,0.07); transform: scale(1.1); }
+
+    .layout { display: flex; flex: 1; }
+
+    .sidebar {
+      width: 310px; min-width: 310px;
+      background: #d9d9d9; padding: 16px 0;
+      min-height: calc(100vh - 100px - 54px);
+    }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 20px; font-size: 26px; font-weight: 400; color: #000; text-decoration: none; cursor: pointer; border-left: 3px solid transparent; transition: background 0.15s, border-color 0.15s, padding-left 0.2s; }
+    .nav-item:hover { background: rgba(0,0,0,0.06); padding-left: 28px; }
+    .nav-item.active { color: #284cb8; border-left-color: #284cb8; background: rgba(40,76,184,0.05); }
+    .nav-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+
+    .main {
+      flex: 1;
+      padding: 24px 28px 60px 22px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
+    }
+
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      animation: fadeDown 0.5s ease both;
+    }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);} }
+
+    .stat-card {
+      border-radius: 12px;
+      padding: 18px 18px 14px;
+      display: flex; flex-direction: column; gap: 6px;
+      position: relative; overflow: hidden;
+      transition: transform 0.22s, box-shadow 0.22s;
+      animation: cardUp 0.5s ease both;
+      cursor: default;
+    }
+    .stat-card:nth-child(1){ background:#a8ef85; animation-delay:0.08s; }
+    .stat-card:nth-child(2){ background:#f9b4f4; animation-delay:0.16s; }
+    .stat-card:nth-child(3){ background:#c8efb0; animation-delay:0.24s; }
+    .stat-card:nth-child(4){ background:#c8c4f4; animation-delay:0.32s; }
+    @keyframes cardUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+
+    .stat-card::before {
+      content:''; position:absolute; top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,rgba(255,255,255,0.0),rgba(255,255,255,0.6),rgba(255,255,255,0.0));
+      background-size:200% 100%; opacity:0; transition:opacity 0.3s;
+      animation:shimmerCard 2s linear infinite;
+    }
+    @keyframes shimmerCard{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+    .stat-card:hover { transform:translateY(-4px); box-shadow:0 10px 28px rgba(0,0,0,0.12); }
+    .stat-card:hover::before { opacity:1; }
+
+    .stat-icon { font-size: 24px; }
+    .stat-number { font-size: 32px; font-weight: 700; color: #000; font-family: 'Inter', sans-serif; }
+    .stat-label { font-size: 15px; font-weight: 400; color: #000; }
+    .stat-trend { font-size: 14px; font-weight: 700; color: #000; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+    .trend-up   { color: #1a5c1a; }
+    .trend-down { color: #8b0000; }
+
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .chart-card {
+      background: #f0ece4; border-radius: 14px; padding: 22px 22px 24px;
+      border: 1px solid rgba(209,201,186,0.6);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      animation: cardUp 0.5s 0.2s ease both;
+      position: relative; overflow: hidden; transition: box-shadow 0.22s;
+    }
+    .chart-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.10); }
+    .chart-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background:linear-gradient(90deg,#dec795,#284cb8,#dec795);
+      background-size:200% 100%; opacity:0; transition:opacity 0.3s;
+      animation:shimmerCard 2.5s linear infinite;
+    }
+    .chart-card:hover::before { opacity:1; }
+    .chart-title { font-size: 20px; font-weight: 600; color: #000; margin-bottom: 14px; }
+
+    .pie-legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-bottom: 14px; }
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 400; color: #000; }
+    .legend-swatch { width: 32px; height: 16px; border-radius: 4px; flex-shrink: 0; }
+    .chart-canvas-wrap { position: relative; width: 100%; }
+
+    .full-chart-card {
+      background: #f0ece4; border-radius: 14px; padding: 22px 22px 24px;
+      border: 1px solid rgba(209,201,186,0.6);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      animation: cardUp 0.5s 0.3s ease both;
+      position: relative; overflow: hidden; transition: box-shadow 0.22s;
+    }
+    .full-chart-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.10); }
+    .full-chart-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background:linear-gradient(90deg,#284cb8,#dec795,#284cb8);
+      background-size:200% 100%; opacity:0; transition:opacity 0.3s;
+      animation:shimmerCard 2.5s linear infinite;
+    }
+    .full-chart-card:hover::before { opacity:1; }
+
+    .table-card {
+      background: #f0ece4; border-radius: 14px; padding: 22px 22px 24px;
+      border: 1px solid rgba(209,201,186,0.6);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      animation: cardUp 0.5s 0.4s ease both;
+      position: relative; overflow: hidden;
+    }
+    .table-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background:linear-gradient(90deg,#dec795,#a8ef85,#dec795);
+      background-size:200% 100%; animation:shimmerCard 2.5s linear infinite;
+    }
+
+    .report-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    .report-table thead th { padding: 12px 16px; text-align: left; font-size: 15px; font-weight: 700; color: #000; background: rgba(209,201,186,0.4); border-bottom: 2px solid rgba(209,201,186,0.6); }
+    .report-table tbody tr { border-bottom: 1px solid rgba(209,201,186,0.4); transition: background 0.18s; animation: rowSlide 0.4s ease both; }
+    .report-table tbody tr:nth-child(1){animation-delay:0.35s;}
+    .report-table tbody tr:nth-child(2){animation-delay:0.43s;}
+    .report-table tbody tr:nth-child(3){animation-delay:0.51s;}
+    .report-table tbody tr:nth-child(4){animation-delay:0.59s;}
+    .report-table tbody tr:nth-child(5){animation-delay:0.67s;}
+    @keyframes rowSlide{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:translateX(0);}}
+    .report-table tbody tr:last-child { border-bottom: none; }
+    .report-table tbody tr:hover { background: rgba(168,239,133,0.18); }
+    .report-table tbody td { padding: 13px 16px; font-size: 15px; font-weight: 400; color: #000; }
+
+    .chip { display:inline-flex;align-items:center;justify-content:center;border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600; }
+    .chip-active    { background:#a8ef85;color:#1a5c1a; }
+    .chip-pending   { background:#f9e4a0;color:#7a5a00; }
+    .chip-closed    { background:#f4b4b4;color:#8b0000; }
+    .chip-review    { background:#c8c4f4;color:#3a1a7a; }
+
+    .prog-wrap { background:#e0dbd0;border-radius:10px;height:8px;overflow:hidden;min-width:80px; }
+    .prog-fill  { height:100%;border-radius:10px;background:#284cb8;transition:width 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+    .reveal { opacity:0;transform:translateY(20px);transition:opacity 0.55s ease,transform 0.55s ease; }
+    .reveal.visible { opacity:1;transform:translateY(0); }
+
+    /* ══════════════════════════════════════
+       BOTTOM ACTION BAR
+    ══════════════════════════════════════ */
+    .bottom-action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 26px;
+      background: #f0ece4;
+      border-radius: 16px;
+      border: 1px solid rgba(209,201,186,0.6);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      gap: 16px;
+    }
+    .bar-left { display: flex; flex-direction: column; gap: 3px; }
+    .bar-label { font-size: 12px; font-weight: 600; color: #999; letter-spacing: 0.06em; text-transform: uppercase; }
+    .bar-desc  { font-size: 15px; font-weight: 600; color: #1e1e1e; }
+    .bar-btns  { display: flex; align-items: center; gap: 12px; }
+
+    /* Go Back */
+    .btn-go-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 0 20px; height: 46px; border-radius: 50px;
+      border: 2px solid rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.85);
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: #1e1e1e;
+      cursor: pointer; text-decoration: none; white-space: nowrap;
+      transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.18s, box-shadow 0.22s;
+      position: relative; overflow: hidden;
+    }
+    .btn-go-back:hover {
+      background: #fff; border-color: #284cb8; color: #284cb8;
+      transform: translateX(-3px);
+      box-shadow: -4px 0 18px rgba(40,76,184,0.12), 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .btn-go-back:active { transform: translateX(-1px) scale(0.97); }
+
+    .back-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(40,76,184,0.10); flex-shrink: 0;
+      transition: background 0.2s, transform 0.22s;
+    }
+    .btn-go-back:hover .back-arrow { background: rgba(40,76,184,0.20); transform: translateX(-3px); }
+
+    /* Export */
+    .btn-export {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 0 24px; height: 46px; border-radius: 50px;
+      border: none; background: #284cb8;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: #fff;
+      cursor: pointer; white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(40,76,184,0.35);
+      transition: background 0.22s, transform 0.18s, box-shadow 0.22s;
+      position: relative; overflow: hidden;
+    }
+    .btn-export::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .btn-export::after {
+      content:''; position:absolute; top:0; left:-75%;
+      width:50%; height:100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: skewX(-20deg); transition: left 0.55s ease;
+    }
+    .btn-export:hover::after { left: 140%; }
+    .btn-export:hover { background: #1e3a9e; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(40,76,184,0.45); }
+    .btn-export:active { transform: scale(0.97) translateY(0); }
+
+    .export-icon-wrap {
+      display: flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(255,255,255,0.20); flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .btn-export:hover .export-icon-wrap { transform: translateY(-2px) rotate(-8deg); }
+    .export-icon-wrap svg {
+      width: 14px; height: 14px; fill: none;
+      stroke: #fff; stroke-width: 2.2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* Export dropdown — opens UPWARD */
+    .export-wrap { position: relative; }
+    .export-dropdown {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      right: 0;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07);
+      padding: 8px; min-width: 185px;
+      opacity: 0; transform: translateY(8px) scale(0.96);
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      z-index: 300;
+    }
+    .export-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    /* caret pointing DOWN */
+    .export-dropdown::after {
+      content:''; position:absolute;
+      bottom: -6px; right: 24px;
+      width: 12px; height: 12px;
+      background: #fff; transform: rotate(45deg);
+      border-radius: 2px; box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+    }
+    .drop-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 9px;
+      font-size: 14px; font-weight: 500; color: #1e1e1e;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .drop-item:hover { background: #f0ece4; }
+    .drop-item-icon { width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0; }
+    .drop-item:nth-child(1) .drop-item-icon { background: #fde8e8; }
+    .drop-item:nth-child(2) .drop-item-icon { background: #e8f0fd; }
+    .drop-item:nth-child(3) .drop-item-icon { background: #e8fde8; }
+
+    .toast { position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#284cb8;color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;padding:12px 26px;border-radius:30px;box-shadow:0 6px 24px rgba(40,76,184,0.30);opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:600;white-space:nowrap; }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    footer { background:#dec795;height:54px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:30px;font-weight:500;color:#000;flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here" id="searchInput"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="icon-btn">🔔</button>
+      <button class="icon-btn">💬</button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item" href="#"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🎓</span> Manage Students</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Manage Industries</a>
+        <a class="nav-item" href="#"><span class="nav-icon">📋</span> Internship Listing</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🚩</span> Reported Content</a>
+        <a class="nav-item active" href="#"><span class="nav-icon">📈</span> Report Analysis</a>
+        <a class="nav-item" href="admin-profile.html"><span class="nav-icon">👤</span> Profile</a>
+        <a class="nav-item" href="#" id="logout-btn"><span class="nav-icon">🚪</span> Log Out</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <div class="stat-cards">
+        <div class="stat-card">
+          <span class="stat-icon">🎓</span>
+          <span class="stat-number" data-target="555" id="cnt1">0</span>
+          <span class="stat-label">Students Registered</span>
+          <span class="stat-trend trend-up">▲ 2.5 % <span style="font-weight:400;font-size:12px;">this week</span></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🏢</span>
+          <span class="stat-number" data-target="369" id="cnt2">0</span>
+          <span class="stat-label">Organizations</span>
+          <span class="stat-trend trend-down">▼ 1.0 % <span style="font-weight:400;font-size:12px;">this week</span></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">💼</span>
+          <span class="stat-number" data-target="462" id="cnt3">0</span>
+          <span class="stat-label">Active Internships</span>
+          <span class="stat-trend trend-up">▲ 4.2 % <span style="font-weight:400;font-size:12px;">this week</span></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📋</span>
+          <span class="stat-number" data-target="335" id="cnt4">0</span>
+          <span class="stat-label">Submissions</span>
+          <span class="stat-trend trend-up">▲ 5.8 % <span style="font-weight:400;font-size:12px;">this week</span></span>
+        </div>
+      </div>
+
+      <div class="charts-row reveal">
+        <div class="chart-card">
+          <p class="chart-title">Applications by Course</p>
+          <div class="pie-legend">
+            <div class="legend-item"><div class="legend-swatch" style="background:#7ecef4;"></div>BCA</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#22b722;"></div>BSc CS</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#f4a4a4;"></div>B.Tech</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#6a4fcf;"></div>MBA</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#e53935;"></div>B.Com</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:280px;">
+            <canvas id="pieChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <p class="chart-title">Applications by Company</p>
+          <div class="chart-canvas-wrap" style="height:320px;">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="full-chart-card reveal">
+        <p class="chart-title">Monthly Applications</p>
+        <div class="chart-canvas-wrap" style="height:280px;">
+          <canvas id="lineChart"></canvas>
+        </div>
+      </div>
+
+      <div class="table-card reveal">
+        <p class="chart-title">Top Internship Applications</p>
+        <table class="report-table" id="reportTable">
+          <thead>
+            <tr><th>#</th><th>Internship Title</th><th>Company</th><th>Applications</th><th>Filled %</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td><td>Frontend Developer Intern</td><td>TechNova Solutions</td><td>120</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="85" style="width:0;background:#22b722;"></div></div><span style="font-size:12px;color:#555;">85%</span></td>
+              <td><span class="chip chip-active">Active</span></td>
+            </tr>
+            <tr>
+              <td>2</td><td>UI/UX Designer Intern</td><td>Creative Minds Studio</td><td>95</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="70" style="width:0;background:#284cb8;"></div></div><span style="font-size:12px;color:#555;">70%</span></td>
+              <td><span class="chip chip-active">Active</span></td>
+            </tr>
+            <tr>
+              <td>3</td><td>Data Analytics Intern</td><td>Insight Analytics</td><td>88</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="60" style="width:0;background:#6a4fcf;"></div></div><span style="font-size:12px;color:#555;">60%</span></td>
+              <td><span class="chip chip-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>4</td><td>Backend Developer Intern</td><td>Future Soft Technologies</td><td>74</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="50" style="width:0;background:#f9b400;"></div></div><span style="font-size:12px;color:#555;">50%</span></td>
+              <td><span class="chip chip-review">In Review</span></td>
+            </tr>
+            <tr>
+              <td>5</td><td>Digital Marketing Intern</td><td>Marketify Pvt Ltd</td><td>58</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="35" style="width:0;background:#e53935;"></div></div><span style="font-size:12px;color:#555;">35%</span></td>
+              <td><span class="chip chip-closed">Closed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Course-wise Breakdown -->
+      <div class="table-card reveal" style="animation-delay:0.5s;">
+        <p class="chart-title">Course-wise Application Breakdown</p>
+        <table class="report-table">
+          <thead>
+            <tr><th>Course</th><th>Total Students</th><th>Applied</th><th>Shortlisted</th><th>Hired</th><th>Success Rate</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>BCA</td><td>140</td><td>118</td><td>65</td><td>32</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="72" style="width:0;background:#7ecef4;"></div></div><span style="font-size:12px;color:#555;">72%</span></td></tr>
+            <tr><td>BSc CS</td><td>120</td><td>104</td><td>58</td><td>28</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="65" style="width:0;background:#22b722;"></div></div><span style="font-size:12px;color:#555;">65%</span></td></tr>
+            <tr><td>B.Tech</td><td>160</td><td>138</td><td>80</td><td>44</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="80" style="width:0;background:#f4a4a4;"></div></div><span style="font-size:12px;color:#555;">80%</span></td></tr>
+            <tr><td>MBA</td><td>80</td><td>62</td><td>30</td><td>16</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="55" style="width:0;background:#6a4fcf;"></div></div><span style="font-size:12px;color:#555;">55%</span></td></tr>
+            <tr><td>B.Com</td><td>55</td><td>38</td><td>18</td><td>9</td>
+              <td><div class="prog-wrap"><div class="prog-fill" data-width="42" style="width:0;background:#e53935;"></div></div><span style="font-size:12px;color:#555;">42%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ══ BOTTOM ACTION BAR — placed AFTER Course-wise table ══ -->
+      <div class="bottom-action-bar reveal" style="animation-delay:0.65s;">
+        <div class="bar-left">
+          <span class="bar-label">Report Analysis</span>
+          <span class="bar-desc">Navigate back or export this full report</span>
+        </div>
+        <div class="bar-btns">
+
+          <!-- Go Back -->
+          <a href="#" class="btn-go-back" onclick="history.back(); return false;" title="Go Back">
+            <span class="back-arrow">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 2.5L4 6.5L8 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            Go Back
+          </a>
+
+          <!-- Export with dropdown (opens upward) -->
+          <div class="export-wrap">
+            <button class="btn-export" id="exportBtn" title="Export Report">
+              <span class="export-icon-wrap">
+                <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 2v7M5 6.5L8 10l3-3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 11v1.5A1.5 1.5 0 003.5 14h9A1.5 1.5 0 0014 12.5V11" stroke-linecap="round"/>
+                </svg>
+              </span>
+              Export
+            </button>
+            <div class="export-dropdown" id="exportDropdown">
+              <div class="drop-item" onclick="handleExport('PDF')">
+                <span class="drop-item-icon">📄</span> Export as PDF
+              </div>
+              <div class="drop-item" onclick="handleExport('Excel')">
+                <span class="drop-item-icon">📊</span> Export as Excel
+              </div>
+              <div class="drop-item" onclick="handleExport('CSV')">
+                <span class="drop-item-icon">🗂️</span> Export as CSV
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <footer>© 2026 InternshipHub | All rights reserved</footer>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function animateCounter(el, target, duration) {
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { el.textContent = target; clearInterval(timer); }
+        else el.textContent = Math.floor(start);
+      }, 16);
+    }
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        animateCounter(document.getElementById('cnt1'), 555, 1400);
+        animateCounter(document.getElementById('cnt2'), 369, 1200);
+        animateCounter(document.getElementById('cnt3'), 462, 1300);
+        animateCounter(document.getElementById('cnt4'), 335, 1100);
+      }, 300);
+    });
+
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    new Chart(pieCtx, {
+      type: 'pie',
+      data: { labels:['BCA','BSc CS','B.Tech','MBA','B.Com'], datasets:[{ data:[25,22,28,15,10], backgroundColor:['#7ecef4','#22b722','#f4a4a4','#6a4fcf','#e53935'], borderColor:'#fff', borderWidth:3, hoverOffset:12 }] },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.parsed}%`}} }, animation:{duration:1200,easing:'easeOutBounce'} }
+    });
+
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    new Chart(barCtx, {
+      type: 'bar',
+      data: { labels:['Future Soft','Nexa Tech','CodeCrafters','TechNova'], datasets:[{ label:'Applications', data:[120,90,72,58], backgroundColor:'#7ecef4', borderRadius:6, borderSkipped:false, hoverBackgroundColor:'#5bbfe8' }] },
+      options: { responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{display:false},ticks:{font:{size:12}}}, y:{beginAtZero:true,max:140,ticks:{stepSize:20,font:{size:12}},grid:{color:'rgba(0,0,0,0.06)'}} }, plugins:{legend:{display:false}}, animation:{duration:1200,easing:'easeOutQuart'} }
+    });
+
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets:[
+          { label:'Applications', data:[120,145,180,160,210,195,240,220,270,255,290,310], borderColor:'#284cb8', backgroundColor:'rgba(40,76,184,0.10)', borderWidth:2.5, tension:0.4, fill:true, pointBackgroundColor:'#284cb8', pointRadius:4, pointHoverRadius:7 },
+          { label:'Shortlisted',  data:[55,68,90,75,105,98,120,110,135,128,145,160], borderColor:'#22b722', backgroundColor:'rgba(34,183,34,0.08)', borderWidth:2.5, tension:0.4, fill:true, pointBackgroundColor:'#22b722', pointRadius:4, pointHoverRadius:7 },
+          { label:'Hired',        data:[18,22,30,26,38,34,42,40,50,46,55,62], borderColor:'#e53935', backgroundColor:'rgba(229,57,53,0.07)', borderWidth:2.5, tension:0.4, fill:true, pointBackgroundColor:'#e53935', pointRadius:4, pointHoverRadius:7 }
+        ]
+      },
+      options: { responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{display:false},ticks:{font:{size:12}}}, y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'},ticks:{font:{size:12}}} }, plugins:{legend:{position:'top',labels:{font:{size:13},boxWidth:20}}}, animation:{duration:1400,easing:'easeOutQuart'} }
+    });
+
+    function animateProgressBars() {
+      document.querySelectorAll('.prog-fill').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 500);
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          if (entry.target.querySelector('.prog-fill')) animateProgressBars();
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.10 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('#reportTable tbody tr').forEach(row => {
+        row.style.display = (!q || row.innerText.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) window.location.href = '#';
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    const exportBtn = document.getElementById('exportBtn');
+    const exportDropdown = document.getElementById('exportDropdown');
+    exportBtn.addEventListener('click', (e) => { e.stopPropagation(); exportDropdown.classList.toggle('open'); });
+    document.addEventListener('click', () => exportDropdown.classList.remove('open'));
+    exportDropdown.addEventListener('click', (e) => e.stopPropagation());
+
+    function handleExport(type) {
+      exportDropdown.classList.remove('open');
+      showToast(`✅ Exporting report as ${type}…`);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    window.addEventListener('load', () => setTimeout(animateProgressBars, 800));
+  </script>
+
+</body>
+</html>

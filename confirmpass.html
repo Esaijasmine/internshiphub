@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Password</title>
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: url('fgirl4.png') center/cover no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(0, 0, 0, 0.05) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.header{
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
+  padding: 20px 40px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1c1f30;
+  letter-spacing: 0.5px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  position: relative;
+  z-index: 10;
+}
+
+.container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:calc(100vh - 80px);
+  gap:40px;
+  position: relative;
+  z-index: 5;
+}
+
+.left{
+  width:55%;
+}
+
+.left img{
+  width:100%;
+  border-radius:10px;
+}
+
+.right{
+  width: 420px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 50px 40px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+              0 0 1px rgba(255, 255, 255, 0.5) inset;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  animation: slideInUp 0.6s ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.icon{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  border:6px solid #f4c542;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 10px;
+  position:relative;
+}
+
+.icon::before{
+  content:"🔒";
+  font-size:32px;
+}
+
+.title{
+  color:#284CB8;
+  font-weight:bold;
+  font-size:22px;
+}
+
+.subtitle{
+  margin:10px 0 20px;
+  font-size:20px;
+}
+
+.label{
+  text-align:left;
+  margin-top:10px;
+  font-size:18px;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:16px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-size:18px;
+  cursor:pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+button::before{
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+button:active::before{
+  width: 300px;
+  height: 300px;
+}
+
+.reset{
+  background: linear-gradient(135deg, #3C64DE 0%, #2e52c7 100%);
+  color:white;
+  margin-top:20px;
+  box-shadow: 0 8px 24px rgba(60, 100, 222, 0.35);
+}
+
+.reset:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(60, 100, 222, 0.45);
+}
+
+.reset:active{
+  transform: translateY(0);
+}
+
+.back{
+  margin-top:15px;
+  background: transparent;
+  color:#28a745;
+  border:2px solid #28a745;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.18);
+  transition: all 0.3s ease;
+}
+
+.back:hover{
+  background: rgba(40, 167, 69, 0.1);
+  transform: translateY(-1px);
+}
+
+.back:active{
+  transform: translateY(0);
+}
+
+.footer{
+  text-align:center;
+  padding:10px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">InternshipHub</div>
+
+<div class="container">
+
+<div class="left">
+<img src="ae4d365c-1157-4f91-933d-521b06039d0c.png">
+</div>
+
+<div class="right">
+<div class="icon"></div>
+<div class="title">Reset Password</div>
+<div class="subtitle">Create a Strong Password</div>
+
+<div class="label">New Password</div>
+<input type="password" id="newPass">
+
+<div class="label">Confirm Password</div>
+<input type="password" id="confirmPass">
+
+<button class="reset" onclick="resetPassword()">Reset Password</button>
+<button class="back" onclick="history.back()">⟲ Back</button>
+</div>
+
+</div>
+
+<div class="footer">© 2026 InternshipHub | All rights reserved</div>
+
+<script>
+function resetPassword(){
+  const newPass = document.getElementById('newPass').value;
+  const confirmPass = document.getElementById('confirmPass').value;
+
+  if(newPass === "" || confirmPass === ""){
+    alert("Please fill all fields");
+    return;
+  }
+
+  if(newPass !== confirmPass){
+    alert("Passwords do not match");
+    return;
+  }
+
+  alert("Password Reset Successful");
+  // redirect if needed
+  // window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>

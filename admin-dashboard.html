@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════
+       TOP NAV  ——  #dec795
+    ══════════════════════════════════════ */
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex; align-items: center;
+      padding: 0 44px; flex-shrink: 0;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .logo { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 32px; color: #000; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+    .search-wrap { position: relative; width: 260px; }
+    .search-wrap input {
+      width: 100%; padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9; border-radius: 8px;
+      background: #fff; font-family: 'Inter', sans-serif;
+      font-size: 16px; color: #1e1e1e; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus { border-color: #284cb8; box-shadow: 0 0 0 3px rgba(40,76,184,0.10); }
+    .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 17px; color: #666; pointer-events: none; }
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 26px; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s; }
+    .icon-btn:hover { background: rgba(0,0,0,0.07); transform: scale(1.1); }
+
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .layout { display: flex; flex: 1; }
+
+    /* ══════════════════════════════════════
+       SIDEBAR  ——  #d9d9d9
+    ══════════════════════════════════════ */
+    .sidebar {
+      width: 310px; min-width: 310px;
+      background: #d9d9d9; padding: 16px 0;
+      min-height: calc(100vh - 100px - 54px);
+    }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 20px; font-size: 26px; font-weight: 400; color: #000; text-decoration: none; cursor: pointer; border-left: 3px solid transparent; transition: background 0.15s, border-color 0.15s, padding-left 0.2s; }
+    .nav-item:hover { background: rgba(0,0,0,0.06); padding-left: 28px; }
+    .nav-item.active { color: #284cb8; border-left-color: #284cb8; background: rgba(40,76,184,0.05); }
+    .nav-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+
+    /* ══════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      padding: 24px 28px 50px 24px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* ── WELCOME TITLE ── */
+    .welcome-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 38px; font-weight: 700; color: #000;
+      animation: fadeDown 0.45s ease both;
+    }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);} }
+
+    /* ══════════════════════════════════════
+       TOP 4 STAT CARDS
+    ══════════════════════════════════════ */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .stat-card {
+      border-radius: 14px;
+      padding: 20px 20px 18px;
+      display: flex; flex-direction: column; gap: 8px;
+      position: relative; overflow: hidden;
+      transition: transform 0.22s, box-shadow 0.22s;
+      animation: cardUp 0.5s ease both;
+      cursor: default;
+    }
+    .stat-card:nth-child(1){ background:#7ecef4; animation-delay:0.08s; }  /* blue   */
+    .stat-card:nth-child(2){ background:#7be87b; animation-delay:0.16s; }  /* green  */
+    .stat-card:nth-child(3){ background:#f0e07a; animation-delay:0.24s; }  /* yellow */
+    .stat-card:nth-child(4){ background:#f4a4a4; animation-delay:0.32s; }  /* red/salmon */
+    @keyframes cardUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+
+    /* shimmer sweep on hover */
+    .stat-card::before {
+      content:''; position:absolute; top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.7),rgba(255,255,255,0));
+      background-size:200% 100%; opacity:0; transition:opacity 0.3s;
+      animation:shimmerCard 2s linear infinite;
+    }
+    @keyframes shimmerCard{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+    .stat-card:hover { transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,0,0,0.14); }
+    .stat-card:hover::before { opacity:1; }
+
+    .stat-icon-top { font-size: 22px; }
+    .stat-number {
+      font-size: 36px; font-weight: 700; color: #000;
+      font-family: 'Inter', sans-serif;
+    }
+    .stat-label { font-size: 16px; font-weight: 400; color: #000; }
+
+    /* ══════════════════════════════════════
+       MAIN BODY — 2 columns
+    ══════════════════════════════════════ */
+    .dashboard-body {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* ══════════════════════════════════════
+       LEFT: OVERVIEW CHART CARD
+    ══════════════════════════════════════ */
+    .overview-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid rgba(209,201,186,0.55);
+      padding: 20px 22px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      animation: cardUp 0.5s 0.2s ease both;
+      position: relative; overflow: hidden;
+    }
+    .overview-card::before {
+      content:''; position:absolute; top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,#7ecef4,#284cb8,#7ecef4);
+      background-size:200% 100%;
+      animation:shimmerCard 2.5s linear infinite;
+    }
+
+    /* tabs row */
+    .tabs-row {
+      display: flex; align-items: center; gap: 4px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      padding: 8px 20px; border: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif; font-size: 15px;
+      font-weight: 500; cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tab-btn.active { background: #284cb8; color: #fff; }
+    .tab-btn:not(.active) { background: transparent; color: #555; }
+    .tab-btn:not(.active):hover { background: rgba(40,76,184,0.08); color: #284cb8; }
+    .dots-more {
+      margin-left: auto; background: none; border: none;
+      font-size: 20px; color: #888; cursor: pointer; letter-spacing: 2px;
+      transition: color 0.2s;
+    }
+    .dots-more:hover { color: #284cb8; }
+
+    /* chart canvas */
+    .chart-wrap { position: relative; height: 220px; margin-bottom: 18px; }
+
+    /* stats below chart */
+    .chart-stats-row {
+      display: flex; gap: 30px;
+      padding: 14px 0;
+      border-top: 1px solid rgba(209,201,186,0.5);
+    }
+    .chart-stat { display: flex; flex-direction: column; gap: 3px; }
+    .cs-number { font-size: 26px; font-weight: 700; color: #000; }
+    .cs-label  { font-size: 14px; font-weight: 400; color: #555; }
+    .cs-change { font-size: 13px; font-weight: 600; }
+    .cs-up   { color: #22b722; }
+    .cs-down { color: #e53935; }
+
+    /* legend row */
+    .legend-row {
+      display: flex; align-items: center; gap: 16px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(209,201,186,0.5);
+    }
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: 14px; color: #000; }
+    .legend-dot  { width: 10px; height: 10px; border-radius: 50%; }
+    .leg-more { margin-left:auto; font-size:14px; color:#284cb8; cursor:pointer; text-decoration:underline; }
+    .total-avdata { font-size:13px; color:#888; }
+
+    /* ══════════════════════════════════════
+       RIGHT: RECENTLY JOINED + LATEST
+    ══════════════════════════════════════ */
+    .right-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .side-card {
+      background: #e8e4dd;
+      border-radius: 14px;
+      padding: 18px 18px 14px;
+      border: 1px solid rgba(209,201,186,0.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      animation: cardUp 0.5s ease both;
+      position: relative; overflow: hidden;
+    }
+    .side-card:nth-child(1){ animation-delay:0.18s; }
+    .side-card:nth-child(2){ animation-delay:0.28s; }
+
+    .side-card::before {
+      content:''; position:absolute; top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,#dec795,#284cb8,#dec795);
+      background-size:200% 100%;
+      animation:shimmerCard 2.5s linear infinite;
+    }
+
+    .side-card-title {
+      font-size: 17px; font-weight: 600; color: #000;
+      margin-bottom: 12px;
+    }
+
+    /* student rows */
+    .student-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(209,201,186,0.4);
+      transition: background 0.18s, padding-left 0.18s;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .student-row:last-child { border-bottom: none; }
+    .student-row:hover { background: rgba(255,255,255,0.55); padding-left: 6px; }
+    .student-row:hover .student-name { color: #284cb8; }
+
+    .stu-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(209,201,186,0.7);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .student-row:hover .stu-avatar { transform: scale(1.08); }
+    .stu-info { display: flex; flex-direction: column; gap: 2px; }
+    .student-name  { font-size: 15px; font-weight: 700; color: #000; transition: color 0.2s; }
+    .student-field { font-size: 13px; font-weight: 400; color: #666; }
+
+    /* internship rows */
+    .internship-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(209,201,186,0.4);
+      transition: background 0.18s, padding-left 0.18s;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .internship-row:last-child { border-bottom: none; }
+    .internship-row:hover { background: rgba(255,255,255,0.55); padding-left: 6px; }
+    .internship-row:hover .int-title { color: #284cb8; }
+
+    .int-logo {
+      width: 36px; height: 36px;
+      border-radius: 8px; object-fit: cover;
+      flex-shrink: 0; border: 1px solid rgba(209,201,186,0.5);
+      transition: transform 0.2s;
+    }
+    .internship-row:hover .int-logo { transform: scale(1.08) rotate(-3deg); }
+    .int-info { flex: 1; }
+    .int-title    { font-size: 14px; font-weight: 700; color: #000; transition: color 0.2s; }
+    .int-created  { font-size: 12px; color: #888; }
+    .int-company-wrap {
+      display: flex; align-items: center; gap: 6px;
+      background: #fff; border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 13px; font-weight: 600; color: #000;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      flex-shrink: 0;
+    }
+    .int-company-logo { width: 20px; height: 20px; border-radius: 4px; object-fit: cover; }
+
+    /* ══════════════════════════════════════
+       RIPPLE
+    ══════════════════════════════════════ */
+    .ripple { position:absolute;border-radius:50%;transform:scale(0);animation:rippleAnim 0.55s linear;background:rgba(255,255,255,0.40);pointer-events:none; }
+    @keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast { position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#284cb8;color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;padding:12px 26px;border-radius:30px;box-shadow:0 6px 24px rgba(40,76,184,0.30);opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:600;white-space:nowrap; }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer { background:#dec795;height:54px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:30px;font-weight:500;color:#000;flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here" id="searchInput"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="icon-btn">🔔</button>
+      <button class="icon-btn">💬</button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item active" href="#"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🎓</span> Manage Students</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Manage Industries</a>
+        <a class="nav-item" href="#"><span class="nav-icon">📋</span> Internship Listing</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🚩</span> Reported Content</a>
+        <a class="nav-item" href="admin-report.html"><span class="nav-icon">📈</span> Report Analysis</a>
+        <a class="nav-item" href="admin-profile.html"><span class="nav-icon">👤</span> Profile</a>
+        <a class="nav-item" href="#" id="logout-btn"><span class="nav-icon">🚪</span> Log Out</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- ── Welcome ── -->
+      <h1 class="welcome-title">Welcome</h1>
+
+      <!-- ── 4 STAT CARDS ── -->
+      <div class="stat-grid">
+
+        <div class="stat-card" onclick="addRipple(this, event)">
+          <span class="stat-icon-top">🎓</span>
+          <span class="stat-number" data-target="150" id="cnt1">0</span>
+          <span class="stat-label">Total Students</span>
+        </div>
+
+        <div class="stat-card" onclick="addRipple(this, event)">
+          <span class="stat-icon-top">🏢</span>
+          <span class="stat-number" data-target="35" id="cnt2">0</span>
+          <span class="stat-label">Total Industries</span>
+        </div>
+
+        <div class="stat-card" onclick="addRipple(this, event)">
+          <span class="stat-icon-top">💼</span>
+          <span class="stat-number" data-target="72" id="cnt3">0</span>
+          <span class="stat-label">Internship Posted</span>
+        </div>
+
+        <div class="stat-card" onclick="addRipple(this, event)">
+          <span class="stat-icon-top">🚩</span>
+          <span class="stat-number" data-target="4" id="cnt4">0</span>
+          <span class="stat-label">Reported Issues</span>
+        </div>
+
+      </div>
+
+      <!-- ── DASHBOARD BODY (chart + right panel) ── -->
+      <div class="dashboard-body">
+
+        <!-- ══ OVERVIEW CHART CARD (LEFT) ══ -->
+        <div class="overview-card">
+
+          <!-- Tabs -->
+          <div class="tabs-row">
+            <button class="tab-btn active" id="tabOverview" onclick="switchTab('overview')">Overview</button>
+            <button class="tab-btn" id="tabApps" onclick="switchTab('applications')">Applications</button>
+            <button class="tab-btn" id="tabHires" onclick="switchTab('hires')">Hires</button>
+            <button class="dots-more" onclick="showToast('⚙️ More options')">•••</button>
+          </div>
+
+          <!-- Chart -->
+          <div class="chart-wrap">
+            <canvas id="overviewChart"></canvas>
+          </div>
+
+          <!-- Stats below chart -->
+          <div class="chart-stats-row">
+            <div class="chart-stat">
+              <span class="cs-number" data-target="1755" id="cntApps">0</span>
+              <span class="cs-label">Applications</span>
+              <span class="cs-label" style="font-size:12px;color:#888;">Total last</span>
+            </div>
+            <div class="chart-stat">
+              <span class="cs-label">Applications</span>
+              <span class="cs-label" style="font-size:12px;">Last 30 days</span>
+              <span class="cs-change cs-up">+8.5%</span>
+            </div>
+            <div class="chart-stat">
+              <span class="cs-number" data-target="754" id="cntApps2">0</span>
+              <span class="cs-label">Applications</span>
+              <span class="cs-change cs-up">+11.2%</span>
+            </div>
+            <div class="chart-stat">
+              <span class="cs-label">Applications</span>
+              <span class="cs-change cs-up">++11.2%</span>
+            </div>
+          </div>
+
+          <!-- Legend row -->
+          <div class="legend-row">
+            <span class="total-avdata">Total reall Avdata</span>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#7ecef4;"></div>
+              Applications
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#7b52c8;"></div>
+              Paid Applications
+            </div>
+            <span class="leg-more" onclick="showToast('📊 More total: 558')">More total 558 🔵</span>
+          </div>
+
+        </div>
+
+        <!-- ══ RIGHT COLUMN ══ -->
+        <div class="right-col">
+
+          <!-- Recently Joined Students -->
+          <div class="side-card">
+            <p class="side-card-title">Recently Joined Students</p>
+
+            <div class="student-row">
+              <img class="stu-avatar"
+                   src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&h=80&fit=crop&crop=face"
+                   alt="Jennifer Winget"
+                   onerror="this.src='https://ui-avatars.com/api/?name=Jennifer+Winget&size=40&background=7ecef4&color=000&bold=true'"/>
+              <div class="stu-info">
+                <span class="student-name">Jennifer Winget</span>
+                <span class="student-field">Computer Science</span>
+              </div>
+            </div>
+
+            <div class="student-row">
+              <img class="stu-avatar"
+                   src="https://images.unsplash.com/photo-1591823951779-4d0f0d7d8e0d?w=80&h=80&fit=crop&crop=face"
+                   alt="Anupama"
+                   onerror="this.src='https://ui-avatars.com/api/?name=Anupama&size=40&background=7be87b&color=000&bold=true'"/>
+              <div class="stu-info">
+                <span class="student-name">Anupama</span>
+                <span class="student-field">Data Science</span>
+              </div>
+            </div>
+
+            <div class="student-row">
+              <img class="stu-avatar"
+                   src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face"
+                   alt="Prajitha"
+                   onerror="this.src='https://ui-avatars.com/api/?name=Prajitha&size=40&background=f4a4a4&color=000&bold=true'"/>
+              <div class="stu-info">
+                <span class="student-name">Prajitha</span>
+                <span class="student-field">Marketing</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Latest Internships -->
+          <div class="side-card">
+            <p class="side-card-title">Latest Internships</p>
+
+            <!-- Google -->
+            <div class="internship-row">
+              <div style="width:36px;height:36px;border-radius:8px;background:#fff;border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;font-weight:700;">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              </div>
+              <div class="int-info">
+                <p class="int-title">Artificial Intelligence</p>
+                <p class="int-created">Created 2 hours ago</p>
+              </div>
+              <div class="int-company-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+              </div>
+            </div>
+
+            <!-- Infosys -->
+            <div class="internship-row">
+              <div style="width:36px;height:36px;border-radius:8px;background:#006BB6;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:#fff;letter-spacing:0.5px;text-align:center;line-height:1.2;">Info<br>sys</div>
+              <div class="int-info">
+                <p class="int-title">Web Development</p>
+                <p class="int-created">1 day ago</p>
+              </div>
+              <div class="int-company-wrap">
+                <div style="width:16px;height:16px;border-radius:3px;background:#006BB6;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:700;color:#fff;">I</div>
+                Infosys
+              </div>
+            </div>
+
+            <!-- Amazon -->
+            <div class="internship-row">
+              <div style="width:36px;height:36px;border-radius:8px;background:#232F3E;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><text x="2" y="18" font-family="Arial" font-size="16" font-weight="bold" fill="#FF9900">a</text></svg>
+              </div>
+              <div class="int-info">
+                <p class="int-title">UI/UX Design</p>
+                <p class="int-created">2 days ago</p>
+              </div>
+              <div class="int-company-wrap">
+                <div style="width:16px;height:16px;border-radius:3px;background:#232F3E;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#FF9900;">a</div>
+                Amazon
+              </div>
+            </div>
+
+          </div>
+
+        </div><!-- /right-col -->
+
+      </div><!-- /dashboard-body -->
+
+    </main>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>© 2026 InternshipHub| All rights reserved</footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+    /* ══════════════════════════════════════
+       ANIMATED COUNTERS
+    ══════════════════════════════════════ */
+    function animateCounter(el, target, duration) {
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { el.textContent = target; clearInterval(timer); }
+        else el.textContent = Math.floor(start);
+      }, 16);
+    }
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        animateCounter(document.getElementById('cnt1'),  150,  900);
+        animateCounter(document.getElementById('cnt2'),   35,  700);
+        animateCounter(document.getElementById('cnt3'),   72,  800);
+        animateCounter(document.getElementById('cnt4'),    4,  400);
+        animateCounter(document.getElementById('cntApps'), 1755, 1400);
+        animateCounter(document.getElementById('cntApps2'), 754, 1200);
+      }, 300);
+    });
+
+    /* ══════════════════════════════════════
+       OVERVIEW CHART (Line — matching Figma)
+    ══════════════════════════════════════ */
+    const ctx = document.getElementById('overviewChart').getContext('2d');
+
+    // gradient fill for first line
+    const grad1 = ctx.createLinearGradient(0, 0, 0, 220);
+    grad1.addColorStop(0, 'rgba(126,206,244,0.35)');
+    grad1.addColorStop(1, 'rgba(126,206,244,0.02)');
+
+    const grad2 = ctx.createLinearGradient(0, 0, 0, 220);
+    grad2.addColorStop(0, 'rgba(123,82,200,0.30)');
+    grad2.addColorStop(1, 'rgba(123,82,200,0.02)');
+
+    let overviewChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','Apr'],
+        datasets: [
+          {
+            label: 'Applications',
+            data: [0, 600, 650, 900, 2500],
+            borderColor: '#7ecef4',
+            backgroundColor: grad1,
+            borderWidth: 2.5,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#7ecef4',
+            pointRadius: 5,
+            pointHoverRadius: 8
+          },
+          {
+            label: 'Paid Applications',
+            data: [0, 400, 450, 700, 1000],
+            borderColor: '#7b52c8',
+            backgroundColor: grad2,
+            borderWidth: 2.5,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#7b52c8',
+            pointRadius: 5,
+            pointHoverRadius: 8
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { grid:{ display:false }, ticks:{ font:{ size:12 } } },
+          y: {
+            beginAtZero: true,
+            max: 3000,
+            ticks: { stepSize:500, font:{ size:12 } },
+            grid: { color:'rgba(0,0,0,0.05)' }
+          }
+        },
+        plugins: { legend:{ display:false } },
+        animation: { duration:1400, easing:'easeOutQuart' }
+      }
+    });
+
+    /* ══════════════════════════════════════
+       TAB SWITCH
+    ══════════════════════════════════════ */
+    const tabDatasets = {
+      overview: {
+        d1: [0, 600, 650, 900, 2500],
+        d2: [0, 400, 450, 700, 1000]
+      },
+      applications: {
+        d1: [100, 800, 750, 1100, 1755],
+        d2: [50,  300, 400,  600,  754]
+      },
+      hires: {
+        d1: [10, 50, 80, 120, 180],
+        d2: [5,  30, 50,  80, 130]
+      }
+    };
+
+    function switchTab(tab) {
+      // update button styles
+      ['tabOverview','tabApps','tabHires'].forEach(id => document.getElementById(id).classList.remove('active'));
+      const map = { overview:'tabOverview', applications:'tabApps', hires:'tabHires' };
+      document.getElementById(map[tab]).classList.add('active');
+
+      // update chart data
+      const d = tabDatasets[tab];
+      overviewChart.data.datasets[0].data = d.d1;
+      overviewChart.data.datasets[1].data = d.d2;
+      overviewChart.update('active');
+    }
+
+    /* ══════════════════════════════════════
+       RIPPLE
+    ══════════════════════════════════════ */
+    function addRipple(el, e) {
+      const r    = document.createElement('span');
+      r.classList.add('ripple');
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${size}px;height:${size}px;
+        left:${(e.clientX||rect.width/2) - rect.left - size/2}px;
+        top:${(e.clientY||rect.height/2) - rect.top  - size/2}px`;
+      el.appendChild(r);
+      el.style.position = 'relative';
+      el.style.overflow = 'hidden';
+      setTimeout(() => r.remove(), 650);
+    }
+
+    /* ══════════════════════════════════════
+       SEARCH
+    ══════════════════════════════════════ */
+    document.getElementById('searchInput').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      // filter student rows
+      document.querySelectorAll('.student-row, .internship-row').forEach(row => {
+        row.style.display = (!q || row.innerText.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+
+    /* ══════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════ */
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) window.location.href = '#';
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    /* student/internship row click */
+    document.querySelectorAll('.student-row').forEach(row => {
+      row.addEventListener('click', () => showToast('👤 ' + row.querySelector('.student-name').textContent));
+    });
+    document.querySelectorAll('.internship-row').forEach(row => {
+      row.addEventListener('click', () => showToast('💼 ' + row.querySelector('.int-title').textContent));
+    });
+  </script>
+
+</body>
+</html>

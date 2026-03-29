@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InternBridge – Connect, Learn, Grow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo" onclick="showPage('home')">Intern<span>Bridge</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#" onclick="showPage('home')">Home</a></li>
+      <li><a href="#" onclick="showPage('browse')">Browse Internships</a></li>
+      <li><a href="#" onclick="showPage('home'); scrollToSection('how-it-works')">How It Works</a></li>
+      <li><a href="#" onclick="showPage('home'); scrollToSection('companies')">Companies</a></li>
+    </ul>
+    <div class="nav-cta">
+      <button class="btn-outline" onclick="showModal('login')">Log In</button>
+      <button class="btn-primary" onclick="showModal('register')">Get Started</button>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ========== HOME PAGE ========== -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="blob blob1"></div>
+      <div class="blob blob2"></div>
+      <div class="blob blob3"></div>
+      <div class="grid-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">🚀 500+ Active Internships</div>
+      <h1 class="hero-title">Launch Your Career<br><span class="gradient-text">The Right Way</span></h1>
+      <p class="hero-sub">InternBridge connects ambitious students with top companies. Find internships tailored to your skills, apply in seconds, and kickstart your professional journey.</p>
+      <div class="hero-search">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search by role, skill, or company..." id="heroSearch">
+          <select id="heroLocation">
+            <option>All Locations</option>
+            <option>Remote</option>
+            <option>Bangalore</option>
+            <option>Mumbai</option>
+            <option>Chennai</option>
+            <option>Hyderabad</option>
+            <option>Delhi</option>
+          </select>
+          <button class="btn-primary" onclick="showPage('browse')">Search</button>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">12K+</span><span class="stat-label">Students Placed</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">800+</span><span class="stat-label">Companies</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">98%</span><span class="stat-label">Satisfaction Rate</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="card-float card-f1">
+        <div class="cf-logo">🏢</div>
+        <div><strong>Google India</strong><p>UX Design Intern</p></div>
+        <span class="tag-green">New</span>
+      </div>
+      <div class="card-float card-f2">
+        <div class="cf-logo">💼</div>
+        <div><strong>Microsoft</strong><p>SDE Intern</p></div>
+        <span class="tag-blue">Remote</span>
+      </div>
+      <div class="card-float card-f3">
+        <img src="https://ui-avatars.com/api/?name=Arjun+Kumar&background=6c63ff&color=fff&size=40" alt="student" class="avatar-sm">
+        <div><strong>Arjun K.</strong><p>Got placed at Flipkart 🎉</p></div>
+      </div>
+      <div class="hero-phone">
+        <div class="phone-screen">
+          <div class="ps-header">
+            <div class="ps-dot r"></div><div class="ps-dot y"></div><div class="ps-dot g"></div>
+          </div>
+          <div class="ps-body">
+            <div class="ps-tag">✨ AI-Matched</div>
+            <h4>Perfect Matches Found</h4>
+            <div class="ps-card"><span>🏢</span><div><b>Amazon</b><small>Data Analyst Intern</small></div><span class="match">96%</span></div>
+            <div class="ps-card"><span>🎨</span><div><b>Adobe</b><small>UI/UX Intern</small></div><span class="match">91%</span></div>
+            <div class="ps-card"><span>☁️</span><div><b>Infosys</b><small>Cloud Intern</small></div><span class="match">88%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Google</span><span>•</span><span>Microsoft</span><span>•</span><span>Amazon</span><span>•</span><span>Adobe</span><span>•</span><span>Flipkart</span><span>•</span><span>Infosys</span><span>•</span><span>TCS</span><span>•</span><span>Wipro</span><span>•</span><span>Swiggy</span><span>•</span><span>Zomato</span><span>•</span><span>Paytm</span><span>•</span><span>CRED</span><span>•</span><span>Razorpay</span><span>•</span>
+      <span>Google</span><span>•</span><span>Microsoft</span><span>•</span><span>Amazon</span><span>•</span><span>Adobe</span><span>•</span><span>Flipkart</span><span>•</span><span>Infosys</span><span>•</span><span>TCS</span><span>•</span><span>Wipro</span><span>•</span><span>Swiggy</span><span>•</span><span>Zomato</span><span>•</span><span>Paytm</span><span>•</span><span>CRED</span><span>•</span><span>Razorpay</span><span>•</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how-it-works">
+    <div class="section-header">
+      <div class="section-badge">Simple Process</div>
+      <h2>How InternBridge Works</h2>
+      <p>From signup to your dream internship in 3 easy steps</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card" style="--delay:0s">
+        <div class="step-num">01</div>
+        <div class="step-icon">👤</div>
+        <h3>Create Your Profile</h3>
+        <p>Sign up, build your profile, upload your resume, and add your skills. It only takes 5 minutes.</p>
+      </div>
+      <div class="step-card" style="--delay:.1s">
+        <div class="step-num">02</div>
+        <div class="step-icon">🔍</div>
+        <h3>Discover Opportunities</h3>
+        <p>Browse hundreds of verified internships filtered by domain, location, duration, and stipend.</p>
+      </div>
+      <div class="step-card" style="--delay:.2s">
+        <div class="step-num">03</div>
+        <div class="step-icon">🚀</div>
+        <h3>Apply & Get Hired</h3>
+        <p>One-click apply. Track your application status live. Get interview calls directly on the platform.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED INTERNSHIPS -->
+  <section class="section bg-alt">
+    <div class="section-header">
+      <div class="section-badge">Hot Right Now</div>
+      <h2>Featured Internships</h2>
+      <p>Handpicked opportunities from top employers</p>
+    </div>
+    <div class="internship-grid" id="featuredGrid"></div>
+    <div class="center-btn">
+      <button class="btn-outline-lg" onclick="showPage('browse')">View All Internships →</button>
+    </div>
+  </section>
+
+  <!-- COMPANIES -->
+  <section class="section" id="companies">
+    <div class="section-header">
+      <div class="section-badge">Top Employers</div>
+      <h2>Companies Hiring Now</h2>
+    </div>
+    <div class="company-grid">
+      <div class="company-card"><span class="comp-emoji">🔵</span><h4>Google India</h4><p>12 openings</p></div>
+      <div class="company-card"><span class="comp-emoji">🟦</span><h4>Microsoft</h4><p>8 openings</p></div>
+      <div class="company-card"><span class="comp-emoji">🟠</span><h4>Amazon</h4><p>15 openings</p></div>
+      <div class="company-card"><span class="comp-emoji">🔴</span><h4>Adobe</h4><p>5 openings</p></div>
+      <div class="company-card"><span class="comp-emoji">🟡</span><h4>Flipkart</h4><p>10 openings</p></div>
+      <div class="company-card"><span class="comp-emoji">🟢</span><h4>Swiggy</h4><p>7 openings</p></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section bg-alt">
+    <div class="section-header">
+      <div class="section-badge">Success Stories</div>
+      <h2>Students Love InternBridge</h2>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p>"I found my dream internship at Google in just 2 weeks! The platform is intuitive and the application process was seamless."</p>
+        <div class="testi-author">
+          <img src="https://ui-avatars.com/api/?name=Priya+Sharma&background=ff6b6b&color=fff" alt="">
+          <div><strong>Priya Sharma</strong><small>IIT Delhi, CS Final Year</small></div>
+        </div>
+      </div>
+      <div class="testi-card featured-testi">
+        <div class="testi-stars">★★★★★</div>
+        <p>"Got 3 interview calls within a week of applying! The filtering system helped me find exactly what I was looking for. Highly recommended!"</p>
+        <div class="testi-author">
+          <img src="https://ui-avatars.com/api/?name=Rahul+Nair&background=6c63ff&color=fff" alt="">
+          <div><strong>Rahul Nair</strong><small>VIT Vellore, ECE 3rd Year</small></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p>"The dashboard made tracking my applications super easy. I loved the real-time notifications. Landed at Microsoft!"</p>
+        <div class="testi-author">
+          <img src="https://ui-avatars.com/api/?name=Ananya+Roy&background=00b894&color=fff" alt="">
+          <div><strong>Ananya Roy</strong><small>NIT Trichy, MBA</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner">
+    <div class="cta-inner">
+      <div class="blob-cta blob-cta1"></div>
+      <div class="blob-cta blob-cta2"></div>
+      <h2>Ready to Begin Your Journey?</h2>
+      <p>Join 12,000+ students who found their perfect internship through InternBridge</p>
+      <div class="cta-btns">
+        <button class="btn-white" onclick="showModal('register')">Sign Up as Student</button>
+        <button class="btn-outline-white" onclick="showModal('industry')">Post an Internship</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">Intern<span>Bridge</span></div>
+        <p>Bridging the gap between ambitious students and forward-thinking companies.</p>
+        <div class="social-links">
+          <a href="#">𝕏</a><a href="#">in</a><a href="#">f</a><a href="#">ig</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Students</h4>
+        <a href="#">Browse Internships</a>
+        <a href="#">Create Profile</a>
+        <a href="#">Resources</a>
+        <a href="#">Career Blog</a>
+      </div>
+      <div class="footer-links">
+        <h4>Companies</h4>
+        <a href="#">Post Internship</a>
+        <a href="#">Manage Applications</a>
+        <a href="#">Pricing</a>
+        <a href="#">Enterprise</a>
+      </div>
+      <div class="footer-links">
+        <h4>Support</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 InternBridge. All rights reserved.</p>
+      <p>Made with ❤️ for students everywhere</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ========== BROWSE PAGE ========== -->
+<div id="page-browse" class="page">
+  <div class="browse-layout">
+    <!-- Filters Sidebar -->
+    <aside class="filter-sidebar" id="filterSidebar">
+      <div class="filter-header">
+        <h3>Filters</h3>
+        <button onclick="clearFilters()" class="clear-btn">Clear All</button>
+      </div>
+
+      <div class="filter-group">
+        <label>Search</label>
+        <div class="filter-search-box">
+          <span>🔍</span>
+          <input type="text" placeholder="Role, skill, company..." id="filterSearch" oninput="applyFilters()">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Category</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="Technology" onchange="applyFilters()"> Technology</label>
+          <label><input type="checkbox" value="Design" onchange="applyFilters()"> Design</label>
+          <label><input type="checkbox" value="Marketing" onchange="applyFilters()"> Marketing</label>
+          <label><input type="checkbox" value="Finance" onchange="applyFilters()"> Finance</label>
+          <label><input type="checkbox" value="Operations" onchange="applyFilters()"> Operations</label>
+          <label><input type="checkbox" value="HR" onchange="applyFilters()"> Human Resources</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Location</label>
+        <select id="filterLocation" onchange="applyFilters()">
+          <option value="">All Locations</option>
+          <option>Remote</option>
+          <option>Bangalore</option>
+          <option>Mumbai</option>
+          <option>Chennai</option>
+          <option>Hyderabad</option>
+          <option>Delhi</option>
+          <option>Pune</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Duration</label>
+        <select id="filterDuration" onchange="applyFilters()">
+          <option value="">Any Duration</option>
+          <option>1-2 Months</option>
+          <option>3-6 Months</option>
+          <option>6+ Months</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Stipend (₹/month)</label>
+        <div class="range-wrap">
+          <input type="range" min="0" max="50000" step="5000" value="50000" id="stipendRange" oninput="updateStipend(this.value)">
+          <div class="range-labels">
+            <span>₹0</span>
+            <span id="stipendVal">Any</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Work Type</label>
+        <div class="pill-group" id="workType">
+          <span class="pill active" onclick="togglePill(this, 'workType')">All</span>
+          <span class="pill" onclick="togglePill(this, 'workType')">Remote</span>
+          <span class="pill" onclick="togglePill(this, 'workType')">On-site</span>
+          <span class="pill" onclick="togglePill(this, 'workType')">Hybrid</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Results -->
+    <div class="browse-main">
+      <div class="browse-topbar">
+        <div>
+          <h2>Internship Opportunities</h2>
+          <p id="resultCount">Showing all internships</p>
+        </div>
+        <div class="sort-wrap">
+          <label>Sort by:</label>
+          <select id="sortBy" onchange="applyFilters()">
+            <option>Newest First</option>
+            <option>Highest Stipend</option>
+            <option>Most Popular</option>
+          </select>
+        </div>
+      </div>
+      <div class="internship-grid browse-grid" id="browseGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== STUDENT DASHBOARD ========== -->
+<div id="page-dashboard" class="page">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="dash-profile">
+        <img src="https://ui-avatars.com/api/?name=Arjun+Kumar&background=6c63ff&color=fff&size=80" alt="profile" class="dash-avatar">
+        <h4>Arjun Kumar</h4>
+        <small>B.Tech CSE • IIT Madras</small>
+        <div class="profile-strength">
+          <div class="ps-bar"><div class="ps-fill" style="width:75%"></div></div>
+          <small>Profile 75% complete</small>
+        </div>
+      </div>
+      <nav class="dash-nav">
+        <a href="#" class="dash-link active" onclick="showDashTab('overview', this)">📊 Overview</a>
+        <a href="#" class="dash-link" onclick="showDashTab('applications', this)">📋 Applications</a>
+        <a href="#" class="dash-link" onclick="showDashTab('saved', this)">❤️ Saved Jobs</a>
+        <a href="#" class="dash-link" onclick="showDashTab('profile', this)">👤 My Profile</a>
+        <a href="#" class="dash-link" onclick="showDashTab('messages', this)">💬 Messages</a>
+        <a href="#" class="dash-link" onclick="showPage('home')">🚪 Logout</a>
+      </nav>
+    </aside>
+    <main class="dash-main">
+
+      <!-- Overview Tab -->
+      <div class="dash-tab active" id="tab-overview">
+        <h2>Welcome back, Arjun 👋</h2>
+        <p class="dash-sub">Here's your internship activity summary</p>
+        <div class="dash-stats">
+          <div class="dstat-card"><span class="dstat-icon">📋</span><div><h3>8</h3><p>Applications</p></div></div>
+          <div class="dstat-card"><span class="dstat-icon">📅</span><div><h3>3</h3><p>Interviews</p></div></div>
+          <div class="dstat-card"><span class="dstat-icon">❤️</span><div><h3>12</h3><p>Saved</p></div></div>
+          <div class="dstat-card"><span class="dstat-icon">✅</span><div><h3>1</h3><p>Offers</p></div></div>
+        </div>
+        <div class="dash-two-col">
+          <div class="dash-card">
+            <h4>Recent Applications</h4>
+            <div class="app-list">
+              <div class="app-item"><div class="app-co">🏢 Google India</div><div class="app-role">UX Design Intern</div><span class="status-badge status-review">Under Review</span></div>
+              <div class="app-item"><div class="app-co">💙 Microsoft</div><div class="app-role">SDE Intern</div><span class="status-badge status-interview">Interview Scheduled</span></div>
+              <div class="app-item"><div class="app-co">🟠 Amazon</div><div class="app-role">Data Analyst Intern</div><span class="status-badge status-applied">Applied</span></div>
+              <div class="app-item"><div class="app-co">🔴 Adobe</div><div class="app-role">Creative Intern</div><span class="status-badge status-offer">Offer Received</span></div>
+            </div>
+          </div>
+          <div class="dash-card">
+            <h4>Upcoming Interviews</h4>
+            <div class="interview-list">
+              <div class="int-item">
+                <div class="int-date"><span>15</span><small>Apr</small></div>
+                <div class="int-info"><strong>Microsoft – SDE Intern</strong><p>Video Call • 10:00 AM</p></div>
+                <button class="btn-sm">Join</button>
+              </div>
+              <div class="int-item">
+                <div class="int-date"><span>18</span><small>Apr</small></div>
+                <div class="int-info"><strong>Flipkart – Product Intern</strong><p>In Person • 2:00 PM</p></div>
+                <button class="btn-sm">Details</button>
+              </div>
+            </div>
+            <h4 style="margin-top:1.5rem">Notifications</h4>
+            <div class="notif-list">
+              <div class="notif-item new">🎉 Adobe sent you an offer letter!</div>
+              <div class="notif-item">📧 Microsoft scheduled your interview</div>
+              <div class="notif-item">👀 Google viewed your profile</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Applications Tab -->
+      <div class="dash-tab" id="tab-applications">
+        <h2>My Applications</h2>
+        <div class="app-table-wrap">
+          <table class="app-table">
+            <thead><tr><th>Company</th><th>Role</th><th>Applied On</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><b>Google India</b></td><td>UX Design Intern</td><td>Mar 20, 2025</td><td><span class="status-badge status-review">Under Review</span></td><td><button class="btn-sm">View</button></td></tr>
+              <tr><td><b>Microsoft</b></td><td>SDE Intern</td><td>Mar 18, 2025</td><td><span class="status-badge status-interview">Interview</span></td><td><button class="btn-sm">Join</button></td></tr>
+              <tr><td><b>Amazon</b></td><td>Data Analyst Intern</td><td>Mar 15, 2025</td><td><span class="status-badge status-applied">Applied</span></td><td><button class="btn-sm">View</button></td></tr>
+              <tr><td><b>Adobe</b></td><td>Creative Intern</td><td>Mar 10, 2025</td><td><span class="status-badge status-offer">Offer</span></td><td><button class="btn-sm btn-accept">Accept</button></td></tr>
+              <tr><td><b>Flipkart</b></td><td>Product Intern</td><td>Mar 5, 2025</td><td><span class="status-badge status-review">Under Review</span></td><td><button class="btn-sm">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Saved Tab -->
+      <div class="dash-tab" id="tab-saved">
+        <h2>Saved Internships</h2>
+        <div class="internship-grid" id="savedGrid"></div>
+      </div>
+
+      <!-- Profile Tab -->
+      <div class="dash-tab" id="tab-profile">
+        <h2>My Profile</h2>
+        <div class="profile-form">
+          <div class="pf-section">
+            <h4>Personal Information</h4>
+            <div class="form-row">
+              <div class="form-group"><label>Full Name</label><input type="text" value="Arjun Kumar"></div>
+              <div class="form-group"><label>Email</label><input type="email" value="arjun.kumar@iitm.ac.in"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Phone</label><input type="text" value="+91 98765 43210"></div>
+              <div class="form-group"><label>Location</label><input type="text" value="Chennai, Tamil Nadu"></div>
+            </div>
+          </div>
+          <div class="pf-section">
+            <h4>Education</h4>
+            <div class="form-row">
+              <div class="form-group"><label>College</label><input type="text" value="IIT Madras"></div>
+              <div class="form-group"><label>Degree</label><input type="text" value="B.Tech Computer Science"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Graduation Year</label><input type="text" value="2026"></div>
+              <div class="form-group"><label>CGPA</label><input type="text" value="8.7"></div>
+            </div>
+          </div>
+          <div class="pf-section">
+            <h4>Skills</h4>
+            <div class="skills-input-wrap">
+              <div class="skill-tag">React <span>×</span></div>
+              <div class="skill-tag">Python <span>×</span></div>
+              <div class="skill-tag">Node.js <span>×</span></div>
+              <div class="skill-tag">UI/UX <span>×</span></div>
+              <input type="text" placeholder="Add a skill..." class="skill-input">
+            </div>
+          </div>
+          <div class="pf-section">
+            <h4>Resume</h4>
+            <div class="resume-upload">
+              <span>📄</span>
+              <div><strong>Arjun_Kumar_Resume.pdf</strong><small>Uploaded on Mar 1, 2025</small></div>
+              <button class="btn-outline">Update</button>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="showToast('Profile saved successfully!')">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Messages Tab -->
+      <div class="dash-tab" id="tab-messages">
+        <h2>Messages</h2>
+        <div class="messages-layout">
+          <div class="msg-sidebar">
+            <div class="msg-thread active"><img src="https://ui-avatars.com/api/?name=Google+HR&background=4285F4&color=fff" alt=""><div><strong>Google India HR</strong><small>Interview details sent...</small></div></div>
+            <div class="msg-thread"><img src="https://ui-avatars.com/api/?name=Microsoft+HR&background=00a4ef&color=fff" alt=""><div><strong>Microsoft Recruiter</strong><small>We'd love to schedule...</small></div></div>
+            <div class="msg-thread"><img src="https://ui-avatars.com/api/?name=Adobe+HR&background=FF0000&color=fff" alt=""><div><strong>Adobe Talent Team</strong><small>Congratulations! Your offer...</small></div></div>
+          </div>
+          <div class="msg-main">
+            <div class="msg-header"><img src="https://ui-avatars.com/api/?name=Google+HR&background=4285F4&color=fff" alt=""><div><strong>Google India HR</strong><small>Online</small></div></div>
+            <div class="msg-body">
+              <div class="msg-bubble received">Hi Arjun! We reviewed your application for UX Design Intern. We'd love to schedule a technical round. Are you available this week?</div>
+              <div class="msg-bubble sent">Hello! Thank you for reaching out. Yes, I'm available Wednesday and Thursday afternoon. Please let me know what works best.</div>
+              <div class="msg-bubble received">Perfect! Wednesday at 3 PM works great. You'll receive a Google Meet link shortly.</div>
+            </div>
+            <div class="msg-input-area">
+              <input type="text" placeholder="Type a message..." id="msgInput">
+              <button onclick="sendMessage()">Send ✈️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ========== INDUSTRY DASHBOARD ========== -->
+<div id="page-industry" class="page">
+  <div class="dash-layout">
+    <aside class="dash-sidebar industry-sidebar">
+      <div class="dash-profile">
+        <div class="company-logo-big">🏢</div>
+        <h4>TechCorp Solutions</h4>
+        <small>Technology • Bangalore</small>
+      </div>
+      <nav class="dash-nav">
+        <a href="#" class="dash-link active" onclick="showIndustryTab('ind-overview', this)">📊 Overview</a>
+        <a href="#" class="dash-link" onclick="showIndustryTab('ind-post', this)">➕ Post Internship</a>
+        <a href="#" class="dash-link" onclick="showIndustryTab('ind-applications', this)">👥 Applications</a>
+        <a href="#" class="dash-link" onclick="showIndustryTab('ind-profile', this)">🏢 Company Profile</a>
+        <a href="#" class="dash-link" onclick="showPage('home')">🚪 Logout</a>
+      </nav>
+    </aside>
+    <main class="dash-main">
+
+      <!-- Industry Overview -->
+      <div class="dash-tab active" id="tab-ind-overview">
+        <h2>Company Dashboard</h2>
+        <div class="dash-stats">
+          <div class="dstat-card"><span class="dstat-icon">📢</span><div><h3>5</h3><p>Active Listings</p></div></div>
+          <div class="dstat-card"><span class="dstat-icon">👥</span><div><h3>134</h3><p>Total Applicants</p></div></div>
+          <div class="dstat-card"><span class="dstat-icon">📅</span><div><h3>12</h3><p>Interviews Set</p></div></div>
+          <div class="dstat-card"><span class="dstat-icon">✅</span><div><h3>4</h3><p>Hired</p></div></div>
+        </div>
+        <div class="dash-two-col">
+          <div class="dash-card">
+            <h4>Active Internship Listings</h4>
+            <div class="listing-list">
+              <div class="listing-item"><div><strong>Frontend Developer Intern</strong><small>32 applications • Closes Apr 30</small></div><span class="status-badge status-offer">Active</span></div>
+              <div class="listing-item"><div><strong>Data Science Intern</strong><small>45 applications • Closes May 15</small></div><span class="status-badge status-offer">Active</span></div>
+              <div class="listing-item"><div><strong>UI/UX Design Intern</strong><small>28 applications • Closes May 1</small></div><span class="status-badge status-offer">Active</span></div>
+              <div class="listing-item"><div><strong>Backend Engineer Intern</strong><small>19 applications • Closes Apr 25</small></div><span class="status-badge status-review">Closing Soon</span></div>
+            </div>
+          </div>
+          <div class="dash-card">
+            <h4>Recent Applicants</h4>
+            <div class="applicant-list">
+              <div class="appl-item"><img src="https://ui-avatars.com/api/?name=Priya+S&background=ff6b6b&color=fff&size=36" alt=""><div><strong>Priya Sharma</strong><small>IIT Delhi • Frontend Role</small></div><button class="btn-sm">Review</button></div>
+              <div class="appl-item"><img src="https://ui-avatars.com/api/?name=Rahul+N&background=6c63ff&color=fff&size=36" alt=""><div><strong>Rahul Nair</strong><small>VIT Vellore • Data Science Role</small></div><button class="btn-sm">Review</button></div>
+              <div class="appl-item"><img src="https://ui-avatars.com/api/?name=Meera+K&background=00b894&color=fff&size=36" alt=""><div><strong>Meera Krishnan</strong><small>NIT Trichy • UX Role</small></div><button class="btn-sm">Review</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post Internship Tab -->
+      <div class="dash-tab" id="tab-ind-post">
+        <h2>Post a New Internship</h2>
+        <div class="post-form">
+          <div class="form-row">
+            <div class="form-group"><label>Internship Title *</label><input type="text" placeholder="e.g. Frontend Developer Intern"></div>
+            <div class="form-group"><label>Department *</label><select><option>Technology</option><option>Design</option><option>Marketing</option><option>Finance</option><option>Operations</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Location *</label><input type="text" placeholder="e.g. Bangalore / Remote"></div>
+            <div class="form-group"><label>Duration *</label><select><option>1-2 Months</option><option>3-6 Months</option><option>6+ Months</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Monthly Stipend (₹)</label><input type="number" placeholder="e.g. 15000"></div>
+            <div class="form-group"><label>No. of Openings</label><input type="number" placeholder="e.g. 3"></div>
+          </div>
+          <div class="form-group full-width"><label>Job Description *</label><textarea rows="5" placeholder="Describe the role, responsibilities, and what interns will learn..."></textarea></div>
+          <div class="form-group full-width"><label>Requirements / Skills Needed</label><textarea rows="3" placeholder="e.g. React, Node.js, 2+ projects..."></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Application Deadline *</label><input type="date"></div>
+            <div class="form-group"><label>Work Type</label><select><option>Remote</option><option>On-site</option><option>Hybrid</option></select></div>
+          </div>
+          <button class="btn-primary" onclick="showToast('Internship posted successfully! 🎉')">Publish Internship</button>
+        </div>
+      </div>
+
+      <!-- Manage Applications -->
+      <div class="dash-tab" id="tab-ind-applications">
+        <h2>Manage Applications</h2>
+        <div class="filter-tabs">
+          <button class="ftab active">All (134)</button>
+          <button class="ftab">New (45)</button>
+          <button class="ftab">Shortlisted (28)</button>
+          <button class="ftab">Interview (12)</button>
+          <button class="ftab">Hired (4)</button>
+          <button class="ftab">Rejected (45)</button>
+        </div>
+        <div class="app-table-wrap">
+          <table class="app-table">
+            <thead><tr><th>Applicant</th><th>College</th><th>Role</th><th>Applied On</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><b>Priya Sharma</b></td><td>IIT Delhi</td><td>Frontend Intern</td><td>Mar 22</td><td><span class="status-badge status-interview">Interview</span></td><td><button class="btn-sm">View</button> <button class="btn-sm btn-accept">Hire</button></td></tr>
+              <tr><td><b>Rahul Nair</b></td><td>VIT Vellore</td><td>Data Science Intern</td><td>Mar 21</td><td><span class="status-badge status-review">Shortlisted</span></td><td><button class="btn-sm">View</button> <button class="btn-sm">Schedule</button></td></tr>
+              <tr><td><b>Meera Krishnan</b></td><td>NIT Trichy</td><td>UI/UX Intern</td><td>Mar 20</td><td><span class="status-badge status-applied">Applied</span></td><td><button class="btn-sm">View</button></td></tr>
+              <tr><td><b>Karthik Ram</b></td><td>Anna University</td><td>Backend Intern</td><td>Mar 19</td><td><span class="status-badge status-applied">Applied</span></td><td><button class="btn-sm">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Company Profile -->
+      <div class="dash-tab" id="tab-ind-profile">
+        <h2>Company Profile</h2>
+        <div class="profile-form">
+          <div class="pf-section">
+            <h4>Company Information</h4>
+            <div class="form-row">
+              <div class="form-group"><label>Company Name</label><input type="text" value="TechCorp Solutions"></div>
+              <div class="form-group"><label>Industry</label><input type="text" value="Technology / SaaS"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Website</label><input type="url" value="https://techcorp.in"></div>
+              <div class="form-group"><label>Founded</label><input type="text" value="2015"></div>
+            </div>
+            <div class="form-group full-width"><label>About Company</label><textarea rows="4">TechCorp Solutions is a leading SaaS company building products used by 500,000+ businesses...</textarea></div>
+          </div>
+          <button class="btn-primary" onclick="showToast('Company profile updated!')">Save Changes</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ========== MODALS ========== -->
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="modal-login" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <div class="modal-header">
+      <div class="logo">Intern<span>Bridge</span></div>
+      <h3>Welcome Back</h3>
+      <p>Log in to continue your journey</p>
+    </div>
+    <div class="modal-tabs">
+      <button class="mtab active" onclick="switchRole(this,'student-login')">Student</button>
+      <button class="mtab" onclick="switchRole(this,'industry-login')">Company</button>
+      <button class="mtab" onclick="switchRole(this,'admin-login')">Admin</button>
+    </div>
+    <div id="student-login" class="role-form active">
+      <div class="form-group"><label>Email Address</label><input type="email" placeholder="student@college.edu"></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"><div class="form-hint"><a href="#">Forgot password?</a></div></div>
+      <button class="btn-primary full" onclick="loginAs('student')">Log In as Student</button>
+    </div>
+    <div id="industry-login" class="role-form">
+      <div class="form-group"><label>Company Email</label><input type="email" placeholder="hr@company.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"><div class="form-hint"><a href="#">Forgot password?</a></div></div>
+      <button class="btn-primary full" onclick="loginAs('industry')">Log In as Company</button>
+    </div>
+    <div id="admin-login" class="role-form">
+      <div class="form-group"><label>Admin Email</label><input type="email" placeholder="admin@internbridge.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"></div>
+      <button class="btn-primary full" onclick="loginAs('admin')">Log In as Admin</button>
+    </div>
+    <p class="modal-foot">Don't have an account? <a href="#" onclick="closeModal('login'); showModal('register')">Sign Up</a></p>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal-overlay" id="modal-register" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('register')">✕</button>
+    <div class="modal-header">
+      <div class="logo">Intern<span>Bridge</span></div>
+      <h3>Create Account</h3>
+      <p>Join thousands of students and companies</p>
+    </div>
+    <div class="modal-tabs">
+      <button class="mtab active" onclick="switchRegRole(this,'reg-student')">I'm a Student</button>
+      <button class="mtab" onclick="switchRegRole(this,'reg-company')">I'm a Company</button>
+    </div>
+    <div id="reg-student" class="role-form active">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Arjun Kumar"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="arjun@iitm.ac.in"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>College</label><input type="text" placeholder="IIT Madras"></div>
+        <div class="form-group"><label>Degree & Year</label><input type="text" placeholder="B.Tech CSE, 3rd Year"></div>
+      </div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="Min. 8 characters"></div>
+      <button class="btn-primary full" onclick="loginAs('student')">Create Student Account</button>
+    </div>
+    <div id="reg-company" class="role-form">
+      <div class="form-row">
+        <div class="form-group"><label>Company Name</label><input type="text" placeholder="TechCorp Solutions"></div>
+        <div class="form-group"><label>Work Email</label><input type="email" placeholder="hr@company.com"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Industry</label><input type="text" placeholder="Technology"></div>
+        <div class="form-group"><label>Company Size</label><select><option>1-50</option><option>51-200</option><option>201-500</option><option>500+</option></select></div>
+      </div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="Min. 8 characters"></div>
+      <button class="btn-primary full" onclick="loginAs('industry')">Create Company Account</button>
+    </div>
+    <p class="modal-foot">Already have an account? <a href="#" onclick="closeModal('register'); showModal('login')">Log In</a></p>
+  </div>
+</div>
+
+<!-- Industry Register Shortcut -->
+<div class="modal-overlay" id="modal-industry" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('industry')">✕</button>
+    <div class="modal-header">
+      <h3>Post Internships Free</h3>
+      <p>Reach 12,000+ talented students instantly</p>
+    </div>
+    <div class="form-group"><label>Company Name</label><input type="text" placeholder="Your Company"></div>
+    <div class="form-group"><label>Work Email</label><input type="email" placeholder="hr@company.com"></div>
+    <div class="form-group"><label>Password</label><input type="password" placeholder="Min. 8 characters"></div>
+    <button class="btn-primary full" onclick="loginAs('industry')">Get Started Free</button>
+  </div>
+</div>
+
+<!-- Apply Modal -->
+<div class="modal-overlay" id="modal-apply" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('apply')">✕</button>
+    <div class="modal-header">
+      <h3>Apply for <span id="applyJobTitle">Internship</span></h3>
+      <p>Your profile will be shared with the company</p>
+    </div>
+    <div class="apply-profile-preview">
+      <img src="https://ui-avatars.com/api/?name=Arjun+Kumar&background=6c63ff&color=fff" alt="">
+      <div><strong>Arjun Kumar</strong><small>IIT Madras • B.Tech CSE</small></div>
+      <span class="status-badge status-offer">75% Profile</span>
+    </div>
+    <div class="form-group"><label>Cover Note (Optional)</label><textarea rows="4" placeholder="Tell them why you're a great fit for this role..."></textarea></div>
+    <div class="form-group">
+      <label>Resume</label>
+      <div class="resume-upload"><span>📄</span><div><strong>Arjun_Kumar_Resume.pdf</strong></div><button class="btn-outline">Change</button></div>
+    </div>
+    <button class="btn-primary full" onclick="submitApplication()">Submit Application 🚀</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Scripts -->
+<script src="app.js"></script>
+</body>
+</html>

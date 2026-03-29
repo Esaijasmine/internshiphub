@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Notifications – InternshipHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════════════════════════════════
+       TOP NAV  ——  #dec795
+    ══════════════════════════════════════ */
+    .topbar {
+      background: #dec795;
+      height: 100px;
+      display: flex; align-items: center;
+      padding: 0 44px; flex-shrink: 0;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .logo { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 32px; color: #000; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+    .search-wrap { position: relative; width: 260px; }
+    .search-wrap input {
+      width: 100%; padding: 12px 40px 12px 16px;
+      border: 1px solid #d9d9d9; border-radius: 8px;
+      background: #fff; font-family: 'Inter', sans-serif;
+      font-size: 16px; color: #1e1e1e; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-wrap input:focus { border-color: #284cb8; box-shadow: 0 0 0 3px rgba(40,76,184,0.10); }
+    .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 17px; color: #666; pointer-events: none; }
+    /* bell with badge */
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 26px; width: 48px; height: 48px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+      position: relative;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.07); transform: scale(1.1); }
+    .bell-badge {
+      position: absolute; top: 6px; right: 6px;
+      width: 10px; height: 10px; background: #e53935;
+      border-radius: 50%; border: 2px solid #dec795;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    @keyframes badgePulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.3);} }
+
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .layout { display: flex; flex: 1; }
+
+    /* ══════════════════════════════════════
+       SIDEBAR  ——  #d9d9d9
+    ══════════════════════════════════════ */
+    .sidebar {
+      width: 310px; min-width: 310px;
+      background: #d9d9d9; padding: 16px 0;
+      min-height: calc(100vh - 100px - 54px);
+    }
+    .sidebar nav { display: flex; flex-direction: column; }
+    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 20px; font-size: 26px; font-weight: 400; color: #000; text-decoration: none; cursor: pointer; border-left: 3px solid transparent; transition: background 0.15s, border-color 0.15s, padding-left 0.2s; }
+    .nav-item:hover { background: rgba(0,0,0,0.06); padding-left: 28px; }
+    .nav-item.active { color: #284cb8; border-left-color: #284cb8; background: rgba(40,76,184,0.05); }
+    .nav-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+
+    /* ══════════════════════════════════════
+       MAIN — 2-column grid
+    ══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      padding: 20px 24px 40px 20px;
+      background: #f5f2ec;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    /* ══════════════════════════════════════
+       LEFT CARD — NOTIFICATIONS LIST
+    ══════════════════════════════════════ */
+    .notif-list-card {
+      background: #e8dfc8;           /* Figma warm tan */
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      animation: cardUp 0.5s ease both;
+    }
+    @keyframes cardUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+
+    /* black header bar */
+    .notif-header {
+      background: #111;
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px;
+    }
+    .notif-header-icon { font-size: 22px; animation: ringShake 2s ease-in-out infinite; }
+    @keyframes ringShake {
+      0%,100%{transform:rotate(0);}
+      10%{transform:rotate(-12deg);}
+      20%{transform:rotate(12deg);}
+      30%{transform:rotate(-8deg);}
+      40%{transform:rotate(8deg);}
+      50%{transform:rotate(0);}
+    }
+    .notif-header-title { font-size: 20px; font-weight: 700; color: #fff; flex: 1; }
+    .header-dots { background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; letter-spacing: 2px; transition: color 0.2s; }
+    .header-dots:hover { color: #fff; }
+
+    /* notification rows */
+    .notif-items { padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
+
+    .notif-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 14px 14px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.22s, box-shadow 0.22s, background 0.2s;
+      animation: rowSlide 0.4s ease both;
+    }
+    .notif-item:nth-child(1){ animation-delay:0.10s; }
+    .notif-item:nth-child(2){ animation-delay:0.18s; }
+    .notif-item:nth-child(3){ animation-delay:0.26s; }
+    .notif-item:nth-child(4){ animation-delay:0.34s; }
+    @keyframes rowSlide { from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);} }
+
+    /* active (selected) item — light blue bg */
+    .notif-item.selected { background: #b8def8; }
+
+    /* shimmer top on hover */
+    .notif-item::before {
+      content:''; position:absolute; top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,#284cb8,#dec795,#284cb8);
+      background-size:200% 100%; opacity:0; transition:opacity 0.3s;
+      animation:shimmerLine 2.5s linear infinite;
+    }
+    @keyframes shimmerLine{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+    .notif-item:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.10); }
+    .notif-item:hover::before { opacity:1; }
+
+    /* org logo circle */
+    .org-logo {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+      transition: transform 0.25s;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    .notif-item:hover .org-logo { transform: scale(1.08) rotate(-4deg); }
+
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-org-name { font-size: 16px; font-weight: 700; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .notif-email    { font-size: 13px; font-weight: 400; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .notif-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .notif-time { font-size: 12px; color: #888; white-space: nowrap; }
+    .notif-date { font-size: 12px; font-weight: 700; color: #000; }
+
+    /* approve / reject icons */
+    .action-icons { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; margin-top: 2px; }
+    .act-tick { color: #22b722; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+    .act-cross { color: #e53935; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+    .act-tick:hover  { transform: scale(1.25); }
+    .act-cross:hover { transform: scale(1.25); }
+
+    /* ripple */
+    .ripple { position:absolute; border-radius:50%; transform:scale(0); animation:rippleAnim 0.55s linear; background:rgba(40,76,184,0.18); pointer-events:none; }
+    @keyframes rippleAnim{ to{transform:scale(4);opacity:0;} }
+
+    /* ══════════════════════════════════════
+       RIGHT CARD — NOTIFICATION DETAIL
+    ══════════════════════════════════════ */
+    .notif-detail-card {
+      background: #e8dfc8;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      animation: cardUp 0.5s 0.12s ease both;
+    }
+
+    /* black header */
+    .detail-header {
+      background: #111;
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px;
+    }
+    .detail-header-title { font-size: 20px; font-weight: 700; color: #fff; flex: 1; }
+
+    /* detail body */
+    .detail-body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 0; }
+
+    /* top org info row */
+    .detail-org-row {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .detail-org-logo {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg,#284cb8,#7ecef4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+      animation: ringShake 3s ease-in-out infinite;
+    }
+    .detail-org-info { display: flex; flex-direction: column; gap: 3px; }
+    .detail-approval-label { font-size: 15px; font-weight: 700; color: #000; }
+    .detail-org-link { font-size: 14px; font-weight: 400; color: #284cb8; text-decoration: underline; cursor: pointer; }
+
+    .detail-divider { border: none; border-top: 1px solid rgba(0,0,0,0.12); margin: 12px 0; }
+
+    /* contact rows */
+    .detail-info-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 0;
+      transition: padding-left 0.2s;
+      border-radius: 8px;
+      cursor: default;
+    }
+    .detail-info-row:hover { background: rgba(255,255,255,0.45); padding-left: 6px; }
+    .detail-info-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+    .detail-info-text { font-size: 15px; font-weight: 400; color: #000; }
+
+    /* document section */
+    .doc-section { margin-top: 16px; }
+    .doc-title-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+    .doc-icon { font-size: 22px; }
+    .doc-title { font-size: 17px; font-weight: 700; color: #000; }
+
+    .doc-item {
+      font-size: 15px; font-weight: 400; color: #000;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.18s, padding-left 0.18s;
+      margin-bottom: 4px;
+    }
+    .doc-item:hover { background: rgba(255,255,255,0.55); padding-left: 14px; color: #284cb8; }
+
+    /* Accept / Reject buttons */
+    .action-btns-row {
+      display: flex; gap: 12px;
+      margin-top: 20px;
+    }
+    .accept-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #22b722; color: #fff;
+      border: none; border-radius: 10px;
+      padding: 12px 16px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .accept-btn:hover { background: #17a317; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(34,183,34,0.3); }
+
+    .reject-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #e53935; color: #fff;
+      border: none; border-radius: 10px;
+      padding: 12px 16px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .reject-btn:hover { background: #c62828; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(229,57,53,0.3); }
+
+    /* button shimmer sweep */
+    .accept-btn::after, .reject-btn::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.22) 50%,transparent 60%);
+      transform:translateX(-100%); transition:transform 0.5s;
+    }
+    .accept-btn:hover::after, .reject-btn:hover::after { transform:translateX(100%); }
+
+    /* footer date/time */
+    .detail-footer {
+      display: flex; justify-content: space-between;
+      margin-top: 16px;
+      font-size: 13px; font-weight: 400; color: #888;
+    }
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast { position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#284cb8;color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;padding:12px 26px;border-radius:30px;box-shadow:0 6px 24px rgba(40,76,184,0.30);opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:600;white-space:nowrap; }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer { background:#dec795;height:54px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:30px;font-weight:500;color:#000;flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ TOP NAV ═══ -->
+  <header class="topbar">
+    <span class="logo">InternshipHub</span>
+    <div class="nav-right">
+      <div class="search-wrap">
+        <input type="text" placeholder="Search Here" id="searchInput"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="icon-btn" title="Notifications">
+        🔔
+        <span class="bell-badge"></span>
+      </button>
+      <button class="icon-btn">💬</button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a class="nav-item" href="admin-dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🎓</span> Manage Students</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Manage Industries</a>
+        <a class="nav-item" href="#"><span class="nav-icon">📋</span> Internship Listing</a>
+        <a class="nav-item" href="#"><span class="nav-icon">🚩</span> Reported Content</a>
+        <a class="nav-item" href="admin-report.html"><span class="nav-icon">📈</span> Report Analysis</a>
+        <a class="nav-item" href="admin-profile.html"><span class="nav-icon">👤</span> Profile</a>
+        <a class="nav-item" href="#" id="logout-btn"><span class="nav-icon">🚪</span> Log Out</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN — 2-col grid -->
+    <main class="main">
+
+      <!-- ══ LEFT: NOTIFICATIONS LIST ══ -->
+      <div class="notif-list-card">
+
+        <!-- Black header -->
+        <div class="notif-header">
+          <span class="notif-header-icon">🔔</span>
+          <span class="notif-header-title">Notifications</span>
+          <button class="header-dots" onclick="showToast('⚙️ Options')">•••</button>
+        </div>
+
+        <!-- List of notifications -->
+        <div class="notif-items" id="notifItems">
+
+          <!-- Item 1 — SELECTED (blue bg) -->
+          <div class="notif-item selected" data-id="1" onclick="selectNotif(this, event)">
+            <div class="org-logo" style="background:linear-gradient(135deg,#1a3a7a,#284cb8);">
+              <span style="font-size:10px;letter-spacing:0.5px;text-align:center;line-height:1.2;">TNS</span>
+            </div>
+            <div class="notif-body">
+              <p class="notif-org-name">Tech Nova Solutions Pvt. Ltd.</p>
+              <p class="notif-email">technovasolutions@gmail.com</p>
+            </div>
+            <div class="notif-right">
+              <span class="notif-time">just now</span>
+              <div class="action-icons">
+                <span class="act-tick" onclick="handleAction(event,'accept','Tech Nova Solutions')">✓</span>
+                <span class="act-cross" onclick="handleAction(event,'reject','Tech Nova Solutions')">✕</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="notif-item" data-id="2" onclick="selectNotif(this, event)">
+            <div class="org-logo" style="background:#111;">
+              <span style="font-size:13px;font-weight:900;color:#fff;">IT</span>
+            </div>
+            <div class="notif-body">
+              <p class="notif-org-name">Innovative Tech Ltd</p>
+              <p class="notif-email">innovativetech@gmail.com</p>
+            </div>
+            <div class="notif-right">
+              <span class="notif-time">4:45 PM</span>
+              <div class="action-icons">
+                <span class="act-tick" onclick="handleAction(event,'accept','Innovative Tech Ltd')">✓</span>
+                <span class="act-cross" onclick="handleAction(event,'reject','Innovative Tech Ltd')">✕</span>
+              </div>
+              <span class="notif-date">20-1-2026</span>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="notif-item" data-id="3" onclick="selectNotif(this, event)">
+            <div class="org-logo" style="background:#1a1a1a;padding:2px;">
+              <span style="font-size:9px;font-weight:700;color:#fff;text-align:center;line-height:1.1;">iT<br><span style="font-size:6px;letter-spacing:1px;color:#aaa;">CREATIVE</span></span>
+            </div>
+            <div class="notif-body">
+              <p class="notif-org-name">Ignitive Techii</p>
+              <p class="notif-email">ignitivetechii@gmail.com</p>
+            </div>
+            <div class="notif-right">
+              <span class="notif-time">3:05 PM</span>
+              <div class="action-icons">
+                <span class="act-tick" onclick="handleAction(event,'accept','Ignitive Techii')">✓</span>
+                <span class="act-cross" onclick="handleAction(event,'reject','Ignitive Techii')">✕</span>
+              </div>
+              <span class="notif-date">18-1-2026</span>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="notif-item" data-id="4" onclick="selectNotif(this, event)">
+            <div class="org-logo" style="background:linear-gradient(135deg,#1a0a3e,#3a1a6e);">
+              <span style="font-size:16px;font-weight:900;color:#c8a820;">PJ</span>
+            </div>
+            <div class="notif-body">
+              <p class="notif-org-name">Panda Jenics</p>
+              <p class="notif-email">pandaiconic@gmail.com</p>
+            </div>
+            <div class="notif-right">
+              <span class="notif-time">2:35 PM</span>
+              <div class="action-icons">
+                <span class="act-tick" onclick="handleAction(event,'accept','Panda Jenics')">✓</span>
+                <span class="act-cross" onclick="handleAction(event,'reject','Panda Jenics')">✕</span>
+              </div>
+              <span class="notif-date">15-2-2026</span>
+            </div>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="notif-item" data-id="5" onclick="selectNotif(this, event)">
+            <div class="org-logo" style="background:linear-gradient(135deg,#0a2a5e,#1a4a8e);">
+              <span style="font-size:11px;font-weight:700;color:#c8d8f4;text-align:center;line-height:1.2;">SB<br><span style="font-size:7px;color:#7ecef4;">COMPANY</span></span>
+            </div>
+            <div class="notif-body">
+              <p class="notif-org-name">Sun Globes</p>
+              <p class="notif-email">sunglobes@gmail.com</p>
+            </div>
+            <div class="notif-right">
+              <span class="notif-time">11:00 AM</span>
+              <div class="action-icons">
+                <span class="act-tick" onclick="handleAction(event,'accept','Sun Globes')">✓</span>
+                <span class="act-cross" onclick="handleAction(event,'reject','Sun Globes')">✕</span>
+              </div>
+              <span class="notif-date">12-2-2026</span>
+            </div>
+          </div>
+
+        </div><!-- /notif-items -->
+      </div><!-- /notif-list-card -->
+
+
+      <!-- ══ RIGHT: NOTIFICATION DETAIL ══ -->
+      <div class="notif-detail-card">
+
+        <!-- Black header -->
+        <div class="detail-header">
+          <span class="notif-header-icon">🔔</span>
+          <span class="detail-header-title">Notification</span>
+          <button class="header-dots" onclick="showToast('⚙️ Options')">•••</button>
+        </div>
+
+        <div class="detail-body">
+
+          <!-- Org approval row -->
+          <div class="detail-org-row">
+            <div class="detail-org-logo">🔔</div>
+            <div class="detail-org-info">
+              <p class="detail-approval-label">New Organization approval</p>
+              <p class="detail-org-link" id="detailOrgLink" onclick="showToast('🔗 Opening Tech Nova Solutions profile')">Tech Nova Solutions Pvt. Ltd.</p>
+            </div>
+          </div>
+
+          <hr class="detail-divider"/>
+
+          <!-- Contact info -->
+          <div class="detail-info-row">
+            <span class="detail-info-icon">✉️</span>
+            <span class="detail-info-text" id="detailEmail">Contact@technova.com</span>
+          </div>
+          <div class="detail-info-row">
+            <span class="detail-info-icon">📞</span>
+            <span class="detail-info-text" id="detailPhone">+91 9865432731</span>
+          </div>
+          <div class="detail-info-row">
+            <span class="detail-info-icon">🌐</span>
+            <span class="detail-info-text" id="detailIndustry">IT Services</span>
+          </div>
+          <div class="detail-info-row">
+            <span class="detail-info-icon">🌐</span>
+            <span class="detail-info-text" id="detailWebsite">www.technova.com</span>
+          </div>
+
+          <hr class="detail-divider"/>
+
+          <!-- Document section -->
+          <div class="doc-section">
+            <div class="doc-title-row">
+              <span class="doc-icon">📄</span>
+              <span class="doc-title">Document Submitted</span>
+            </div>
+            <div class="doc-item" onclick="showToast('📄 Downloading: Company Registration Certificate')">
+              Company Registration Certificate
+            </div>
+            <div class="doc-item" onclick="showToast('📄 Downloading: GST Certificate')">
+              GST Certificate
+            </div>
+          </div>
+
+          <!-- Accept / Reject buttons -->
+          <div class="action-btns-row">
+            <button class="accept-btn" id="acceptMainBtn" onclick="acceptOrg(event)">
+              <span>✅</span> Accept Organization
+            </button>
+            <button class="reject-btn" id="rejectMainBtn" onclick="rejectOrg(event)">
+              <span>❌</span> Reject Organization
+            </button>
+          </div>
+
+          <!-- Footer date/time -->
+          <div class="detail-footer">
+            <span id="detailDate">20-9-2026</span>
+            <span id="detailTime">4:50 PM</span>
+          </div>
+
+        </div>
+      </div><!-- /notif-detail-card -->
+
+    </main>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>© 2026 InternshipHub| All rights reserved</footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+
+  <script>
+    // ── Notification data for detail panel ───────────────
+    const notifData = {
+      1: {
+        org:     'Tech Nova Solutions Pvt. Ltd.',
+        email:   'Contact@technova.com',
+        phone:   '+91 9865432731',
+        industry:'IT Services',
+        website: 'www.technova.com',
+        date:    '20-9-2026',
+        time:    '4:50 PM'
+      },
+      2: {
+        org:     'Innovative Tech Ltd',
+        email:   'contact@innovativetech.com',
+        phone:   '+91 9812345678',
+        industry:'Software Development',
+        website: 'www.innovativetech.com',
+        date:    '20-1-2026',
+        time:    '4:45 PM'
+      },
+      3: {
+        org:     'Ignitive Techii',
+        email:   'ignitivetechii@gmail.com',
+        phone:   '+91 9988776655',
+        industry:'Creative Technology',
+        website: 'www.ignitivetechii.com',
+        date:    '18-1-2026',
+        time:    '3:05 PM'
+      },
+      4: {
+        org:     'Panda Jenics',
+        email:   'pandaiconic@gmail.com',
+        phone:   '+91 8877665544',
+        industry:'Product Design',
+        website: 'www.pandajenics.com',
+        date:    '15-2-2026',
+        time:    '2:35 PM'
+      },
+      5: {
+        org:     'Sun Globes',
+        email:   'sunglobes@gmail.com',
+        phone:   '+91 7766554433',
+        industry:'Global Services',
+        website: 'www.sunglobes.com',
+        date:    '12-2-2026',
+        time:    '11:00 AM'
+      }
+    };
+
+    /* ── SELECT NOTIFICATION (update detail panel) ─────── */
+    function selectNotif(el, e) {
+      if (e.target.classList.contains('act-tick') || e.target.classList.contains('act-cross')) return;
+
+      // ripple
+      addRipple(el, e);
+
+      // deselect all, select clicked
+      document.querySelectorAll('.notif-item').forEach(i => i.classList.remove('selected'));
+      el.classList.add('selected');
+
+      // update detail panel
+      const id   = el.dataset.id;
+      const data = notifData[id];
+      if (!data) return;
+
+      document.getElementById('detailOrgLink').textContent  = data.org;
+      document.getElementById('detailEmail').textContent    = data.email;
+      document.getElementById('detailPhone').textContent    = data.phone;
+      document.getElementById('detailIndustry').textContent = data.industry;
+      document.getElementById('detailWebsite').textContent  = data.website;
+      document.getElementById('detailDate').textContent     = data.date;
+      document.getElementById('detailTime').textContent     = data.time;
+
+      // animate detail panel
+      const body = document.querySelector('.detail-body');
+      body.style.transition = 'opacity 0.2s';
+      body.style.opacity    = '0';
+      setTimeout(() => { body.style.opacity = '1'; }, 200);
+    }
+
+    /* ── TICK / CROSS QUICK ACTIONS ─────────────────────── */
+    function handleAction(e, type, org) {
+      e.stopPropagation();
+      if (type === 'accept') {
+        showToast(`✅ Accepted: ${org}`);
+      } else {
+        showToast(`❌ Rejected: ${org}`);
+      }
+    }
+
+    /* ── MAIN ACCEPT / REJECT BUTTONS ───────────────────── */
+    function acceptOrg(e) {
+      addRipple(document.getElementById('acceptMainBtn'), e);
+      const org = document.getElementById('detailOrgLink').textContent;
+      showToast(`✅ Organization Accepted: ${org}`);
+      // remove from list (demo)
+      const selected = document.querySelector('.notif-item.selected');
+      if (selected) {
+        selected.style.transition = 'opacity 0.3s,transform 0.3s';
+        selected.style.opacity    = '0';
+        selected.style.transform  = 'translateX(40px)';
+        setTimeout(() => selected.remove(), 320);
+      }
+    }
+
+    function rejectOrg(e) {
+      addRipple(document.getElementById('rejectMainBtn'), e);
+      const org = document.getElementById('detailOrgLink').textContent;
+      showToast(`❌ Organization Rejected: ${org}`);
+      const selected = document.querySelector('.notif-item.selected');
+      if (selected) {
+        selected.style.transition = 'opacity 0.3s,transform 0.3s';
+        selected.style.opacity    = '0';
+        selected.style.transform  = 'translateX(40px)';
+        setTimeout(() => selected.remove(), 320);
+      }
+    }
+
+    /* ── SEARCH FILTER ───────────────────────────────────── */
+    document.getElementById('searchInput').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('.notif-item').forEach(item => {
+        item.style.display = (!q || item.innerText.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+
+    /* ── RIPPLE ──────────────────────────────────────────── */
+    function addRipple(el, e) {
+      const r    = document.createElement('span');
+      r.classList.add('ripple');
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${size}px;height:${size}px;
+        left:${(e.clientX||rect.width/2) - rect.left - size/2}px;
+        top:${(e.clientY||rect.height/2) - rect.top  - size/2}px`;
+      el.appendChild(r);
+      el.style.position='relative'; el.style.overflow='hidden';
+      setTimeout(() => r.remove(), 650);
+    }
+
+    /* ── SIDEBAR ACTIVE ──────────────────────────────────── */
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (this.id === 'logout-btn') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to log out?')) window.location.href = 'admin-dashboard.html';
+          return;
+        }
+        document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    /* ── TOAST ───────────────────────────────────────────── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+
+</body>
+</html>

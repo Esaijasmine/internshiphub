@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Email</title>
+<style>
+body{
+  margin:0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('fgirl3.png') no-repeat center/cover fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(0, 0, 0, 0.05) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.header{
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
+  padding: 20px 40px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1c1f30;
+  letter-spacing: 0.5px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  position: relative;
+  z-index: 10;
+}
+
+.container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:calc(100vh - 80px);
+  gap:40px;
+}
+
+.left{
+  width:55%;
+}
+
+.left img{
+  width:100%;
+  border-radius:10px;
+}
+
+.right{
+  width: 420px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 50px 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+              0 0 1px rgba(255, 255, 255, 0.5) inset;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.right:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4),
+              0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.icon{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:#2c8bb8;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 10px;
+}
+
+.icon::before{
+  content:"\2709";
+  color:white;
+  font-size:40px;
+}
+
+.title{
+  color:#284CB8;
+  font-weight:bold;
+  font-size:22px;
+}
+
+.text{
+  margin:10px 0;
+}
+
+.email{
+  color:#284CB8;
+}
+
+.otp{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin:20px 0;
+}
+
+.otp input{
+  width:40px;
+  height:40px;
+  text-align:center;
+  font-size:18px;
+  border:1px solid #aaa;
+  border-radius:6px;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.verify{
+  background:#284CB8;
+  color:white;
+  margin-top:10px;
+}
+
+.back{
+  margin-top:15px;
+  background: rgba(255,255,255,0.55);
+  color: #2ea044;
+  border: 2px solid #2ea044;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.back:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(46, 160, 68, 0.25);
+}
+
+.footer{
+  text-align:center;
+  padding:10px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">InternshipHub</div>
+
+<div class="container">
+
+<div class="left">
+<img src="a762c9e4-43f6-499e-add2-96cfd8d75634.png" alt="">
+</div>
+
+<div class="right">
+<div class="icon"></div>
+<div class="title">Verify Email</div>
+<div class="text">We send a code to</div>
+<div class="email">jas@gmail.com</div>
+<div class="text">Enter your Verification OTP</div>
+
+<div class="otp">
+<input type="text" maxlength="1">
+<input type="text" maxlength="1">
+<input type="text" maxlength="1">
+<input type="text" maxlength="1">
+<input type="text" maxlength="1">
+<input type="text" maxlength="1">
+</div>
+
+<button class="verify" onclick="verifyOTP()">Verify</button>
+<button class="back" onclick="history.back()">⟲ Back</button>
+</div>
+
+</div>
+
+<div class="footer">© 2026 InternshipHub | All rights reserved</div>
+
+<script>
+const correctOTP = "123456"; // change if needed
+
+function verifyOTP(){
+  const inputs = document.querySelectorAll('.otp input');
+  let enteredOTP = "";
+
+  inputs.forEach(input => {
+    enteredOTP += input.value;
+  });
+
+  if(enteredOTP === correctOTP){
+    window.location.href = "confirmpass.html";
+  } else {
+    alert("Invalid OTP");
+  }
+}
+
+// auto move to next input
+const inputs = document.querySelectorAll('.otp input');
+inputs.forEach((input, index) => {
+  input.addEventListener('input', () => {
+    if(input.value.length === 1 && index < inputs.length - 1){
+      inputs[index + 1].focus();
+    }
+  });
+});
+</script>
+
+</body>
+</html>

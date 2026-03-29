@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InternshipHub - Forgot Password</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: url('fgirl2.png') no-repeat center/cover fixed;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(0, 0, 0, 0.05) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(14px);
+      padding: 20px 40px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1c1f30;
+      letter-spacing: 0.5px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+      position: relative;
+      z-index: 10;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 40px 80px 40px 20px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 50px 40px;
+      border-radius: 20px;
+      width: 420px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                  0 0 1px rgba(255, 255, 255, 0.5) inset;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      animation: slideInUp 0.6s ease-out;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4),
+                  0 0 1px rgba(255, 255, 255, 0.5) inset;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .lock {
+      font-size: 60px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: bounce 0.6s ease-out;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .card h2 {
+      color: #284CB8;
+      margin-bottom: 12px;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .card p {
+      margin-bottom: 30px;
+      color: #555;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .email-display {
+      background: #f9f9f9;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .email-display i {
+      font-size: 18px;
+      color: #667eea;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 2px solid #e0e0e0;
+      outline: none;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .input-group input::placeholder {
+      color: #999;
+    }
+
+    .input-group input:focus {
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1),
+                  0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:active::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, #3C64DE 0%, #2e52c7 100%);
+      color: white;
+      box-shadow: 0 8px 24px rgba(60, 100, 222, 0.35);
+    }
+
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(60, 100, 222, 0.45);
+    }
+
+    .send-btn:active {
+      transform: translateY(0);
+    }
+
+    .back-btn {
+      background: transparent;
+      color: #28a745;
+      border: 2px solid #28a745;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(40, 167, 69, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .back-btn:active {
+      transform: translateY(0);
+    }
+
+    .back-btn i {
+      margin-right: 6px;
+      color: #28a745;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+      color: #1c1f30;
+      position: relative;
+      z-index: 10;
+    }
+  </style>
+
+</head>
+<body>
+
+  <header>InternshipHub</header>
+
+  <div class="container">
+    <div class="card">
+      <div class="lock" style="color: #00cc66; font-size: 70px;">✓</div>
+      <h2>Reset OTP sent!</h2>
+      <p>We've sent a password reset otp to your email.Please check your inbox and follow the instructions.</p>
+
+      <label style="display: block; text-align: left; font-weight: 600; color: #333; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Email Address</label>
+
+      <div class="email-display">
+        <i class="fas fa-envelope"></i>
+        <span>Send to : jas@gmail.com</span>
+      </div>
+
+      <button class="btn send-btn" onclick="resendMail()">Resend Email</button>
+      <button class="btn back-btn" onclick="goBack()"><i class="fas fa-undo"></i>Back to login</button>
+    </div>
+  </div>
+
+  <footer>© 2026 InternshipHub | All rights reserved</footer>
+
+  <script>
+    function resendMail() {
+      alert("OTP resent successfully!");
+    }
+
+    function goBack() {
+      // Redirect to login page
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>
