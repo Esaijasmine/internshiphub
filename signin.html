@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InternshipHub Signup</title>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
 :root {
     --primary: #3C64DE;
@@ -19,23 +17,27 @@
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-    margin: 0;
     font-family: 'Segoe UI', system-ui, sans-serif;
     background-image: url('defaultimg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-
     color: var(--text);
-    min-height: 100vh;
-    overflow: hidden;
     position: relative;
     transition: background-image 0.5s ease-in-out;
-    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Overlay */
@@ -47,54 +49,62 @@ body::before {
     z-index: 0;
 }
 
+/* ── Top bar ── */
 .top-bar {
     background: var(--primary);
     color: #fff;
     text-align: center;
-    padding: 14px;
-    font-size: 18px;
+    padding: 10px;
+    font-size: 16px;
     font-weight: 600;
     position: relative;
     z-index: 1;
+    flex-shrink: 0;
 }
 
+/* ── Header ── */
 .header {
-    padding: 16px 24px;
-    font-size: 28px;
+    padding: 10px 24px;
+    font-size: 24px;
     font-weight: 700;
     background: #F5F5F5;
     position: relative;
     z-index: 1;
+    flex-shrink: 0;
 }
 
+/* ── Container fills remaining screen height ── */
 .container {
     position: relative;
     z-index: 1;
+    flex: 1;
     display: flex;
     justify-content: flex-start;
-    padding: 20px 60px 20px 80px;
+    align-items: center;
+    padding: 16px 40px 16px 60px;
+    overflow: hidden;
 }
 
 .form-section {
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
 }
 
+/* ── Form card ── */
 .form-card {
     position: relative;
     background: var(--card-bg);
-    border-radius: 28px;
-    padding: 20px 24px;
+    border-radius: 24px;
+    padding: 20px 22px;
     backdrop-filter: blur(20px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    transform: translateY(20px);
     animation: slideUp 0.8s ease-out forwards;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .form-card:hover {
-    transform: translateY(0) scale(1.01);
+    transform: scale(1.01);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
@@ -102,7 +112,7 @@ body::before {
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 28px;
+    border-radius: 24px;
     background: linear-gradient(120deg, rgba(255,255,255,0.25), rgba(255,255,255,0));
     opacity: 0;
     pointer-events: none;
@@ -115,66 +125,68 @@ body::before {
 
 @keyframes slideUp {
     from { transform: translateY(30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(0);    opacity: 1; }
 }
 
 @keyframes pop {
-    0% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-6px) scale(1.01); }
-    100% { transform: translateY(0) scale(1); }
+    0%   { transform: scale(1); }
+    50%  { transform: translateY(-4px) scale(1.01); }
+    100% { transform: scale(1); }
 }
 
 .form-card.role-changed {
     animation: pop 0.5s ease;
 }
 
+/* ── Title ── */
 .form-title {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
     letter-spacing: 0.3px;
 }
 
+/* ── Tabs ── */
 .tabs {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 18px;
-    padding: 6px;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 5px;
     background: rgba(255,255,255,0.5);
     border-radius: 999px;
-    position: relative;
 }
 
 .tab {
-    padding: 10px 16px;
+    padding: 8px 14px;
     border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
+    font-size: 14px;
     color: var(--muted);
-    position: relative;
-    transition: transform 0.2s ease, filter 0.2s ease, color 0.2s ease;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .tab:hover {
     transform: translateY(-1px);
-    filter: brightness(1.05);
 }
 
 .tab.active {
     background: #fff;
     color: var(--text);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+/* ── Form group ── */
 .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 
 label {
     font-weight: 600;
-    margin-bottom: 6px;
+    font-size: 13px;
+    margin-bottom: 4px;
     display: block;
 }
 
@@ -184,11 +196,13 @@ label {
 
 input {
     width: 100%;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
     border: 1px solid rgba(0,0,0,0.2);
     outline: none;
+    font-size: 14px;
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    background: rgba(255,255,255,0.9);
 }
 
 input:focus {
@@ -203,45 +217,46 @@ input:focus {
     transform: translateY(-50%);
     cursor: pointer;
     color: rgba(0,0,0,0.5);
+    font-size: 14px;
     transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .icon:hover {
-    transform: translateY(-50%) scale(1.05);
-    color: rgba(0,0,0,0.7);
+    transform: translateY(-50%) scale(1.1);
+    color: rgba(0,0,0,0.75);
 }
 
+/* ── Button ── */
 .btn {
     position: relative;
     overflow: hidden;
     width: 100%;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 11px;
+    border-radius: 10px;
     border: none;
     background: linear-gradient(120deg, var(--primary), var(--primary-dark));
     color: #fff;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 8px;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.2);
 }
 
 .btn:active {
-    transform: translateY(0) scale(0.98);
+    transform: scale(0.98);
 }
 
 .btn::after {
     content: '';
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 10px;
-    height: 10px;
+    left: 50%; top: 50%;
+    width: 10px; height: 10px;
     background: rgba(255,255,255,0.4);
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(0);
@@ -253,13 +268,14 @@ input:focus {
 .btn:active::after {
     transform: translate(-50%, -50%) scale(18);
     opacity: 1;
-    transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
+/* ── Footer text ── */
 .footer {
     text-align: center;
-    font-size: 13px;
-    margin-top: 12px;
+    font-size: 12px;
+    margin-top: 8px;
+    color: var(--muted);
 }
 
 .login-link {
@@ -271,6 +287,21 @@ input:focus {
 
 .login-link:hover {
     filter: brightness(1.1);
+}
+
+/* ── Responsive for small screens ── */
+@media (max-height: 600px) {
+    .form-title { font-size: 17px; margin-bottom: 8px; }
+    .tabs { margin-bottom: 8px; }
+    .form-group { margin-bottom: 6px; }
+    input { padding: 8px 12px; }
+    .btn { padding: 9px; margin-top: 6px; }
+    .footer { margin-top: 6px; font-size: 11px; }
+}
+
+@media (max-width: 500px) {
+    .container { padding: 12px 16px; }
+    .form-section { max-width: 100%; }
 }
 </style>
 </head>
@@ -330,9 +361,7 @@ input:focus {
 
             <button class="btn" onclick="submitForm()">Register</button>
 
-            <div class="footer">
-                By continuing, you agree to our terms & conditions
-            </div>
+            <div class="footer">By continuing, you agree to our terms & conditions</div>
 
             <div class="footer">
                 Already registered?
@@ -350,18 +379,12 @@ function selectRole(el) {
 
     const role = el.textContent.trim();
     const title = document.querySelector('.form-title');
-    if (title) {
-        title.textContent = `${role} Sign Up`;
-    }
+    if (title) title.textContent = `${role} Sign Up`;
 
     const body = document.body;
-    if (role === "Student") {
-        body.style.backgroundImage = "url('img1.png')";
-    } else if (role === "Admin") {
-        body.style.backgroundImage = "url('admimg2.png')";
-    } else if (role === "Industry") {
-        body.style.backgroundImage = "url('indusimg2.png')";
-    }
+    if (role === "Student")       body.style.backgroundImage = "url('img1.png')";
+    else if (role === "Admin")    body.style.backgroundImage = "url('admimg2.png')";
+    else if (role === "Industry") body.style.backgroundImage = "url('indusimg2.png')";
 
     const card = document.querySelector('.form-card');
     if (card) {
@@ -371,16 +394,16 @@ function selectRole(el) {
 }
 
 function togglePassword(id) {
-    let input = document.getElementById(id);
+    const input = document.getElementById(id);
     input.type = input.type === "password" ? "text" : "password";
 }
 
 async function submitForm() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
+    const name    = document.getElementById("name").value.trim();
+    const email   = document.getElementById("email").value.trim();
+    const pass    = document.getElementById("password").value.trim();
     const confirm = document.getElementById("confirmPassword").value.trim();
-    const role = document.querySelector('.tab.active').textContent.trim();
+    const role    = document.querySelector('.tab.active').textContent.trim();
 
     if (!name || !email || !pass || !confirm) {
         alert("Please fill all fields!");
@@ -392,24 +415,28 @@ async function submitForm() {
         return;
     }
 
-    const response = await fetch('http://localhost:3000/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password: pass, role })
-    });
+    try {
+        const response = await fetch('http://localhost:3000/api/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password: pass, role })
+        });
 
-    const result = await response.json();
+        const result = await response.json();
 
-    if (result.success) {
-        alert("Signup Successful!");
-        window.location.href = "logs.html";
-    } else {
-        alert(result.message);
+        if (result.success) {
+            alert("Signup Successful!");
+            window.location.href = "login/logs.html";
+        } else {
+            alert(result.message);
+        }
+    } catch (err) {
+        alert("Cannot connect to server. Make sure node server.js is running.");
     }
 }
 
 function goToLogin() {
-    window.location.href = "logs.html";
+    window.location.href = "login/logs.html";
 }
 </script>
 
